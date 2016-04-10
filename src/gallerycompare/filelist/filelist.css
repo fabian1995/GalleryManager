@@ -1,0 +1,13 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.titleText {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #708090;
+}
+
+.titleTextContainer {
+    -fx-padding: 5px 3px;
+}

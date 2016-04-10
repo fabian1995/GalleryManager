@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ 
+<project name="JavaFX Hello World Example" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+
+	<property environment="env"/>
+	<property name="build.src.dir" value="src"/>
+	<property name="build.classes.dir" value="classes"/>
+	<property name="build.dist.dir" value="fxdist"/>
+	<property name="build.lib.dir" value="lib" />
+ 
+	<target name="check-version"> 
+		<echo>Java/JVM version: ${ant.java.version}</echo> 
+		<echo>Java/JVM detail version: ${java.version}</echo>
+		<echo>Java location: ${env.JAVA_HOME}"</echo>
+	</target>
+
+	<target name="default" depends="clean,compile">
+		<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+			uri="javafx:com.sun.javafx.tools.ant"
+			classpath="${env.JAVA_HOME}/lib/ant-javafx.jar"/>
+ 
+		<fx:jar destfile="${build.dist.dir}/GalleryManager.jar">
+			<fx:application name="Gallery Manager"
+				mainClass="gallerydemo.GalleryDemoApplication"/>
+			<fileset dir="${build.classes.dir}" casesensitive="no">
+				<exclude name="META-INF/**/*"/>
+			</fileset>
+			<fileset dir="${build.src.dir}" casesensitive="yes">
+				<exclude name="**/*.java*"/>
+			</fileset>
+			<manifest>
+				<attribute name="Implementation-Vendor" value="Fabian Hummer"/>
+				<attribute name="Implementation-Version" value="1.0"/>
+			</manifest>
+		</fx:jar>
+	</target>
+ 
+	<target name="clean">
+		<mkdir dir="${build.classes.dir}"/>
+		<mkdir dir="${build.dist.dir}"/>
+
+		<delete>
+			<fileset dir="${build.classes.dir}" includes="**/*"/>
+			<fileset dir="${build.dist.dir}" includes="**/*"/>
+		</delete>
+	</target>
+ 
+	<target name="compile" depends="clean">
+		<javac includeantruntime="false"
+			srcdir="${build.src.dir}"
+			destdir="${build.classes.dir}"
+			fork="yes"
+			executable="${env.JAVA_HOME}/bin/javac"
+			source="1.8"
+			debug="on">
+
+			<classpath>
+				<pathelement path="lib/commons-io-2.4/commons-io-2.4.jar"/>
+			</classpath>
+		</javac>
+
+		<unzip dest="${build.classes.dir}">
+			<fileset dir="${build.lib.dir}">
+				<include name="**/*.jar" />
+				<exclude name="**/*javadoc.jar" />
+				<exclude name="**/*sources.jar" />
+				<exclude name="**/*tests.jar" />
+			</fileset>
+		</unzip>
+	</target>
+ 
+</project>

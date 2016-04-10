@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0" minWidth="400" fx:controller="gallerydemo.GalleryDemoViewController">
+    
+    <stylesheets>
+        <URL value="@gallerydemoview.css"/>
+    </stylesheets>
+    
+    <BorderPane styleClass="root">
+        <top>
+            <HBox spacing="10" alignment="BOTTOM_LEFT" 
+                  BorderPane.alignment="CENTER"
+                  fx:id="menuBar">
+
+                <BorderPane styleClass="alwaysActive">
+                    <top>
+                        <VBox alignment="BASELINE_CENTER"> 
+                            <Text text="Ort"/>
+                            <Separator orientation="HORIZONTAL"/>
+                        </VBox>
+                    </top>
+                    <center>
+                        <Button text="Bilder" id="button-location" styleClass="topMenuButton"/>
+                        <!--<Button text="v" styleClass="topMenuDropDown"/>-->
+                    </center>
+                </BorderPane>
+            </HBox>
+        </top>
+
+        <left>
+            <TreeView fx:id="locationTreeView" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="200" />
+        </left>
+
+        <center>
+            <ScrollPane fx:id="scrollImageContainer">
+                <content>
+                    <FlowPane fx:id="imagePane" prefHeight="200" prefWidth="300" rowValignment="CENTER" ></FlowPane>
+                </content>
+            </ScrollPane>
+        </center>
+    </BorderPane>
+    
+    <BorderPane fx:id="fadeOutPane" styleClass="overlay">
+        <center>
+            <Text fx:id="fadeOutText" text="..."/>
+        </center>
+    </BorderPane>
+    
+</StackPane>

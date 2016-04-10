@@ -1,0 +1,12 @@
+classes/*
+build/*
+dist/*
+fxdist/*
+lib/**/docs/*
+lib/**/*.zip
+**/.thumbnails/*
+galleries/*
+nbproject/*
+media/*
+build.xml
+config.json

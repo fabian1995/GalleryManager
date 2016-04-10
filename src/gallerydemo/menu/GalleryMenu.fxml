@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox alignment="BASELINE_CENTER"> 
+            <Text text="Gallerie"/>
+            <Separator orientation="HORIZONTAL"/>
+        </VBox>
+    </top>
+    <center>
+        <HBox alignment="BASELINE_CENTER"> 
+            <Button text="Importieren" fx:id="newGalleryButton" id="button-new" styleClass="topMenuButton"/>
+            <Button text="Löschen" fx:id="deleteGalleryButton" id="button-del" styleClass="topMenuButton"/>
+            <Button text="Eigenschaften" fx:id="galleryPropertiesButton" id="button-properties" styleClass="topMenuButton"/>
+            <Button text="Synchronisieren" fx:id="syncGalleryButton" id="button-sync" styleClass="topMenuButton"/>
+        </HBox>
+    </center>
+</fx:root>

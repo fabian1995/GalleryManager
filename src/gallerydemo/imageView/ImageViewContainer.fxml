@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+    
+    <stylesheets>
+        <URL value="@imageviewcontainer.css"/>
+    </stylesheets>
+    
+    <ImageView fx:id="stackBottomImageView"></ImageView>
+    <BorderPane fx:id="stackTopInfoPane">
+        <top>
+            <HBox alignment="CENTER_LEFT" styleClass="imageRatingBar" maxHeight="20.0">
+                <Text fx:id="resolutionText" />
+            </HBox>
+        </top>
+        <center></center>
+        <bottom>
+            <HBox alignment="CENTER" styleClass="imageRatingBar" maxHeight="30.0">
+                <Button id="button-fav" styleClass="imageRatingButton"/>
+                <Button id="button-inv" styleClass="imageRatingButton"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</fx:root>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox alignment="BASELINE_CENTER"> 
+            <Text text="Album"/>
+            <Separator orientation="HORIZONTAL"/>
+        </VBox>
+    </top>
+    <center>
+        <HBox alignment="BASELINE_CENTER"> 
+            <Button text="Neu" id="button-new" styleClass="topMenuButton"/>
+            <Button text="Eigenschaften" id="button-properties" styleClass="topMenuButton"/>
+        </HBox>
+    </center>
+</BorderPane>

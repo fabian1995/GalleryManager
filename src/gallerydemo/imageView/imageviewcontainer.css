@@ -1,0 +1,44 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+
+ImageView {
+    -fx-opacity: 1.0;
+}
+
+ImageView:hover {
+    -fx-opacity: 0.5;
+}
+
+.imageRatingBar {
+    -fx-background-color: #818181;
+    -fx-opacity: 0.7;
+    -fx-hgap: 5px;
+    height: 20px;
+    -fx-padding: 3px 5px 3px 5px;
+}
+
+.imageRatingBar Text {
+    -fx-fill: #ffffff;
+}
+
+.imageRatingButton {
+    -fx-background-color: transparent;
+    -fx-graphic-text-gap: 0px;
+}
+
+.imageRatingButton:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.7);
+}
+
+#button-fav.imageRatingButton {
+    -fx-graphic: url('rating_star.png');
+}
+
+#button-inv.imageRatingButton {
+    -fx-graphic: url('rating_invisible.png');
+}

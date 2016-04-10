@@ -1,0 +1,102 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.overlay {
+    -fx-background-color: rgba(128, 128, 128, 0.5);
+}
+
+.overlay Text {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 32px;
+}
+
+.root {
+
+}
+
+.root #menuBar {
+    -fx-background-color: #61a2b1;
+    -fx-padding: 10px 10px 10px 10px;
+}
+
+.root #imagePane {
+    -fx-background-color: #818181;
+    -fx-padding: 10px 5px 10px 5px;
+    -fx-vgap: 5px;
+    -fx-hgap: 5px;
+}
+
+BorderPane Text {
+    -fx-font-size: 12px;
+    -fx-fill: #ffffff;
+}
+
+Button.topMenuButton {
+    -fx-graphic: url('images/icon_question.png');
+    -fx-graphic-text-gap: 0px;
+    -fx-text-alignment: center;
+    -fx-text-fill: #ffffff;
+    -fx-content-display: TOP;
+    -fx-background-color: transparent;
+}
+
+Button.topMenuButton:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.7);
+}
+
+Button.topMenuButton:pressed {
+    -fx-background-color: rgba(180, 180, 180, 0.7);
+}
+
+#button-location.topMenuButton {
+    -fx-graphic: url('images/icon_bilder.png');
+}
+
+#button-fav.topMenuButton {
+    -fx-graphic: url('images/icon_star.png');
+}
+
+#button-inv.topMenuButton {
+    -fx-graphic: url('images/icon_invisible.png');
+}
+
+#button-new.topMenuButton {
+    -fx-graphic: url('images/icon_new.png');
+}
+
+#button-del.topMenuButton {
+    -fx-graphic: url('images/icon_del.png');
+}
+
+#button-properties.topMenuButton {
+    -fx-graphic: url('images/icon_props.png');
+}
+
+#button-sync.topMenuButton {
+    -fx-graphic: url('images/icon_sync.png');
+}
+
+Button.topMenuDropDown {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 20px;
+    -fx-font-weight: BOLD;
+    -fx-max-width: 10px;
+}
+
+Button.topMenuDropDown:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.7);
+}
+
+Button.topMenuDropDown:pressed {
+    -fx-background-color: rgba(180, 180, 180, 0.7);
+}
+
+Text {
+    -fx-fill: #ffffff;
+}
+
+VBox {
+    -fx-spacing: 4px;
+}

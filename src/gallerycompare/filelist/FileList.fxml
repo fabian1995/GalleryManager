@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1">
+    
+    <stylesheets>
+        <URL value="@filelist.css"/>
+    </stylesheets>
+    
+    <top>
+        <VBox styleClass="titleTextContainer">
+            <Text fx:id="titleElement" styleClass="titleText"/>
+        </VBox>
+    </top>
+    
+    <center>
+        <ListView fx:id="fileListView"/>
+    </center>
+    
+    <bottom>
+        <VBox styleClass="bottomPane" minHeight="200" maxHeight="200" alignment="TOP_CENTER" >
+            <HBox alignment="BASELINE_CENTER">
+                <Button text="Kopieren" fx:id="buttonCopy"/>
+                <Button text="Löschen" fx:id="buttonDelete"/>
+                <Button text="Alle kopieren" fx:id="buttonCopyAll"/>
+                <Button text="Alle löschen" fx:id="buttonDeleteAll"/>
+            </HBox>
+            <Separator orientation="HORIZONTAL"/>
+            <HBox alignment="CENTER" style="-fx-padding: 9px;">
+                <ImageView fx:id="imagePreview">
+                    <image></image>
+                </ImageView>
+            </HBox>
+        </VBox>
+    </bottom>
+    
+</fx:root>
