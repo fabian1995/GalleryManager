@@ -5,13 +5,18 @@
  */
 package gallerydemo.menu;
 
+import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallerycompare.GalleryCompareView;
 import gallerydemo.GalleryDemoViewController;
 import galleryremote.GalleryRemoteView;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,6 +41,9 @@ public class GalleryMenuController extends BorderPane {
 
     @FXML
     private Button newGalleryButton;
+    
+    @FXML
+    private Button newFolderButton;
 
     @FXML
     private Button galleryPropertiesButton;
@@ -78,6 +86,13 @@ public class GalleryMenuController extends BorderPane {
         this.galleryPropertiesButton.setDisable(true);
         this.deleteGalleryButton.setDisable(true);
         this.exportGalleryButton.setDisable(true);
+        
+        // Add extension filter to file chooser
+        this.fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("All Images", "*.*"),
+            new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+            new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
 
         this.syncGalleryButton.setOnAction((ActionEvent event) -> {
             GalleryNode g = controller.getActiveGallery();
@@ -99,7 +114,7 @@ public class GalleryMenuController extends BorderPane {
         this.importGalleryButton.setOnAction((ActionEvent event) -> {
             Parent root1 = new GalleryRemoteView(controller.getRemoteGalleryLocation(), controller.getRoot());
             Stage stage = new Stage();
-            stage.setTitle("Gallerie hinzufügen");
+            stage.setTitle("Gallerien importieren...");
             stage.setScene(new Scene(root1));
             stage.show();
             stage.setOnCloseRequest((WindowEvent we) -> {
@@ -110,11 +125,23 @@ public class GalleryMenuController extends BorderPane {
         });
         
         this.addimgGalleryButton.setOnAction((ActionEvent event)  -> {
-            Stage stage = new Stage();
-            controller.disableInput("Bilder importieren...");
+            this.controller.disableInput("Bilder zur Gallerie hinzufügen...");
+            List<File> list = fileChooser.showOpenMultipleDialog(new Stage());
             
-            List<File> list = fileChooser.showOpenMultipleDialog(stage);
-            controller.enableInput();
+            if (list != null) {
+                for (File f : list) {
+                    if (f.getName().matches(GalleryManager.IMAGE_FILE_REGEX)) {
+                        try {
+                            System.out.println(":: " + f.toPath() + " -> " + new File(this.controller.getActiveGallery().getLocation() + "/" + f.getName()).toPath());
+                            Files.copy(f.toPath(), new File(this.controller.getActiveGallery().getLocation() + "/" + f.getName()).toPath(), COPY_ATTRIBUTES);
+                        } catch (IOException ex) {
+                            Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+            this.controller.reloadGalleryImages(this.controller.getActiveGallery());
+            this.controller.enableInput();
         });
     }
     
@@ -135,10 +162,10 @@ public class GalleryMenuController extends BorderPane {
         }
 
         if (!this.controller.getRemoteGalleryLocation().exists()) {
-            this.newGalleryButton.setDisable(true);
+            this.importGalleryButton.setDisable(true);
         }
         else {
-            this.newGalleryButton.setDisable(false);
+            this.importGalleryButton.setDisable(false);
         }
     }
 }

@@ -65,6 +65,10 @@ Button.topMenuButton:pressed {
     -fx-graphic: url('images/icon_new.png');
 }
 
+#button-newfolder.topMenuButton {
+    -fx-graphic: url('images/icon_newfolder.png');
+}
+
 #button-del.topMenuButton {
     -fx-graphic: url('images/icon_del.png');
 }
