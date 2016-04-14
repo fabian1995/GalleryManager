@@ -32,7 +32,7 @@ public class GalleryDemoApplication extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("GalleryDemoView.fxml"));
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root);
 
         primaryStage.setTitle("GalleryDemo");
         primaryStage.setScene(scene);
