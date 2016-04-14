@@ -77,6 +77,18 @@ Button.topMenuButton:pressed {
     -fx-graphic: url('images/icon_sync.png');
 }
 
+#button-import.topMenuButton {
+    -fx-graphic: url('images/icon_import.png');
+}
+
+#button-export.topMenuButton {
+    -fx-graphic: url('images/icon_export.png');
+}
+
+#button-addimg.topMenuButton {
+    -fx-graphic: url('images/icon_addimg.png');
+}
+
 Button.topMenuDropDown {
     -fx-background-color: transparent;
     -fx-text-fill: #ffffff;

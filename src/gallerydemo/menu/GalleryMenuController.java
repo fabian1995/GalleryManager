@@ -9,7 +9,9 @@ import gallery.GalleryNode;
 import gallerycompare.GalleryCompareView;
 import gallerydemo.GalleryDemoViewController;
 import galleryremote.GalleryRemoteView;
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -28,18 +31,31 @@ import javafx.stage.WindowEvent;
 public class GalleryMenuController extends BorderPane {
 
     private final GalleryDemoViewController controller;
+    
+    private final FileChooser fileChooser = new FileChooser();
 
     @FXML
     private Button newGalleryButton;
 
     @FXML
-    private Button deleteGalleryButton;
-
-    @FXML
     private Button galleryPropertiesButton;
-
+    
+    @FXML
+    private Button deleteGalleryButton;
+    
+    @FXML
+    private Button addimgGalleryButton;
+    
+    @FXML
+    private Button importGalleryButton;
+    
+    @FXML
+    private Button exportGalleryButton;
+    
     @FXML
     private Button syncGalleryButton;
+    
+    
 
     public GalleryMenuController(GalleryDemoViewController controller) {
 
@@ -58,8 +74,10 @@ public class GalleryMenuController extends BorderPane {
         this.actualizeButtons();
 
         // TODO Implement features for these buttons
+        this.newGalleryButton.setDisable(true);
         this.galleryPropertiesButton.setDisable(true);
         this.deleteGalleryButton.setDisable(true);
+        this.exportGalleryButton.setDisable(true);
 
         this.syncGalleryButton.setOnAction((ActionEvent event) -> {
             GalleryNode g = controller.getActiveGallery();
@@ -78,7 +96,7 @@ public class GalleryMenuController extends BorderPane {
             }
         });
 
-        this.newGalleryButton.setOnAction((ActionEvent event) -> {
+        this.importGalleryButton.setOnAction((ActionEvent event) -> {
             Parent root1 = new GalleryRemoteView(controller.getRemoteGalleryLocation(), controller.getRoot());
             Stage stage = new Stage();
             stage.setTitle("Gallerie hinzufügen");
@@ -90,6 +108,14 @@ public class GalleryMenuController extends BorderPane {
             });
             controller.disableInput("Gallerien werden hinzugefügt...");
         });
+        
+        this.addimgGalleryButton.setOnAction((ActionEvent event)  -> {
+            Stage stage = new Stage();
+            controller.disableInput("Bilder importieren...");
+            
+            List<File> list = fileChooser.showOpenMultipleDialog(stage);
+            controller.enableInput();
+        });
     }
     
     public void actualizeButtons() {
@@ -100,6 +126,13 @@ public class GalleryMenuController extends BorderPane {
         }
         else
             this.syncGalleryButton.setDisable(false);
+        
+        if (this.controller.getActiveGallery() == null) {
+            this.addimgGalleryButton.setDisable(true);
+        }
+        else {
+            this.addimgGalleryButton.setDisable(false);
+        }
 
         if (!this.controller.getRemoteGalleryLocation().exists()) {
             this.newGalleryButton.setDisable(true);
