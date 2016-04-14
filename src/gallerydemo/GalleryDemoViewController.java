@@ -97,6 +97,10 @@ public class GalleryDemoViewController implements Initializable {
     public File getRemoteGalleryLocation() {
         return this.remoteGalleryLocation;
     }
+    
+    public GalleryManager getManager() {
+        return this.galleryManager;
+    }
 
     // the initialize method is automatically invoked by the FXMLLoader - it's magic
     @Override
@@ -110,10 +114,12 @@ public class GalleryDemoViewController implements Initializable {
         this.scrollImageContainer.setFitToHeight(true);
         this.scrollImageContainer.setFitToWidth(true);
         
-        this.locationTreeView.setShowRoot(false);
+        //this.locationTreeView.setShowRoot(false);
 
         this.locationTreeView.getSelectionModel().selectedItemProperty()
                 .addListener(new GalleryDemoViewListener(this));
+        
+        this.locationTreeView.getRoot().setExpanded(true);
         
         this.menuBarController = new GalleryMenuController(this);
         this.menuBar.getChildren().add(this.menuBarController);

@@ -21,7 +21,7 @@ public class GalleryManager {
     
     public GalleryManager(File root, GalleryNode compareTrunk) {
         this.root = root;
-        this.trunk = new GalleryNode(this.root);
+        this.trunk = new GalleryNode(this.root, false, "Bilder auf diesem Computer");
         this.compareTrunk = compareTrunk;
     }
 

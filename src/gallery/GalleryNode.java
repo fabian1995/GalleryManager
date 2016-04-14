@@ -31,14 +31,16 @@ public class GalleryNode extends TreeItem {
     }*/
     
     public GalleryNode(File config) {
-        //this.name = this.fileName = name;
-        this(config, false);
+        this(config, false, null);
     }
     
     public GalleryNode(File config, boolean isImported) {
-        //this.name = this.fileName = name;
+        this(config, isImported, null);
+    }
+    
+    public GalleryNode(File config, boolean isImported, String name) {
         this.isImported = isImported;
-        this.setConfigFile(config);
+        this.setConfigFile(config, name);
     }
     
     public boolean contains(String nodeName) {
@@ -130,16 +132,22 @@ public class GalleryNode extends TreeItem {
         }
     }
 
-    private void setConfigFile(File config) {
+    private void setConfigFile(File config, String name) {
         this.config = config;
 
-        Logger.getLogger("logfile").info("[log] Reading config: " + config.getAbsolutePath());
+        Logger.getLogger("logfile").log(Level.INFO, "[log] Reading config: " + config.getAbsolutePath());
         
         if (config.exists() && config.isFile() && config.getName().endsWith(".json")) {
             this.readConfigFile();
         }
-        else {
+        else if(name == null) {
             this.name = config.getName();
+        }
+        else {
+            this.name = name;
+            this.origin = null;
+            if (this.config != null && this.config.exists() && this.config.isFile())
+                this.saveConfig();
         }
         super.setValue((this.isImported ? "[OK] " : "") + this.name);
     }
@@ -164,7 +172,10 @@ public class GalleryNode extends TreeItem {
     public void saveConfig() {
         JSONObject config = new JSONObject();
         config.put(GALLERY_JSON_CONF_NAME, this.name);
-        config.put(GALLERY_JSON_CONF_ORIGIN, this.origin.getAbsolutePath());
+        if (this.origin == null)
+            config.put(GALLERY_JSON_CONF_ORIGIN, "");
+        else
+            config.put(GALLERY_JSON_CONF_ORIGIN, this.origin.getAbsolutePath());
         
         try (FileWriter configFile = new FileWriter(this.config)) {
             configFile.write(config.toString());
