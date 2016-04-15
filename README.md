@@ -35,11 +35,11 @@ To run GalleryManager, you Java 8 (which should support JavaFX). To build the pr
 ## How to run
 I hve not yet added a GUI that creates the basic configuration files that GalleryManager needs to run. You have to create a "config.json" file that contains references to the directory where you save your pictures in your computer and (optionally) the path to the server to synchronize gallieries.
 
-´´´json
+ˋˋˋ
 {
     "localGalleryLocation": "/path/to/images",
     "remoteGalleryLocation": "/path/to/server"
 }
-´´´
+ˋˋˋ
 If you want to use GalleryManager without a server, leave the value for "remoteGalleryLocation" blank (empty string).
 I will add some examples for the configuration within the next days.
