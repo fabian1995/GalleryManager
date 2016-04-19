@@ -96,32 +96,11 @@ public class GalleryMenuController extends BorderPane {
         );
         
         this.newGalleryButton.setOnAction((ActionEvent event) -> {
-            GalleryNode g = controller.getActiveGallery();
-            File base;
-            if (g == null)
-                base = this.controller.getLocalGalleryLocation();
-            else if (g.isGallery())
-                base = g.getLocation().getParentFile();
-            else
-                base = new File(g.getLocation().getAbsolutePath() + "/" + g.getFileName());
-            
-            TextInputDialog dialog = new TextInputDialog("Neue Gallerie");
-            dialog.setTitle("Neue Gallerie erstellen");
-            dialog.setHeaderText("Bitte geben Sie den Namen der neuen Gallerie ein");
-            dialog.setContentText("Name: ");
-
-            controller.disableInput("Gallerie wird erstellt...\nBitte einen Namen eingeben.");
-            Optional<String> result = dialog.showAndWait();
-            
-            if (result.isPresent()){
-                File newFolder = new File(base.getAbsolutePath() + "/" + result.get());
-                newFolder.mkdir();
-                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get());
-                newGallery.saveConfig();
-                this.controller.reloadTreeItems();
-            }
-            
-            controller.enableInput();
+            this.createGalleryOrFolder(true);
+        });
+        
+        this.newFolderButton.setOnAction((ActionEvent event) -> {
+            this.createGalleryOrFolder(false);
         });
 
         this.syncGalleryButton.setOnAction((ActionEvent event) -> {
@@ -198,5 +177,49 @@ public class GalleryMenuController extends BorderPane {
         else {
             this.importGalleryButton.setDisable(false);
         }
+    }
+    
+    private void createGalleryOrFolder(boolean isGallery) {
+        GalleryNode g = this.controller.getActiveGallery();
+        File base;
+        if (g == null)
+            base = this.controller.getLocalGalleryLocation();
+        else if (g.isGallery())
+            base = g.getLocation().getParentFile();
+        else
+            base = new File(g.getLocation().getAbsolutePath() + "/" + g.getFileName());
+
+        TextInputDialog dialog = new TextInputDialog(
+                isGallery ? "Neue Galerie" : "Neuer Ordner");
+        dialog.setTitle(
+                isGallery ? "Neue Galerie erstellen" : "Neuen Ordner erstellen");
+        dialog.setHeaderText(
+                isGallery ? "Bitte geben Sie den Namen der neuen Galerie ein"
+                        : "Bitte geben Sie den Namen des neuen Ordners ein");
+        dialog.setContentText("Name: ");
+
+        this.controller.disableInput(
+                isGallery ? "Galerie wird erstellt...\nBitte einen Namen eingeben."
+                        : "Ordner wird erstellt...\nBitte einen Namen eingeben.");
+        Optional<String> result = dialog.showAndWait();
+
+        if (result.isPresent()) {
+            File newFolder = new File(base.getAbsolutePath() + "/" + result.get());
+            newFolder.mkdir();
+            if (isGallery) {
+                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get());
+                newGallery.saveConfig();
+            }
+            else {
+                try {
+                    new File(newFolder.getAbsolutePath() + "/" + GalleryManager.FOLDER_CONFIG_FILE_NAME).createNewFile();
+                } catch (IOException ex) {
+                    Logger.getLogger(GalleryMenuController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            this.controller.reloadTreeItems();
+        }
+
+        this.controller.enableInput();
     }
 }

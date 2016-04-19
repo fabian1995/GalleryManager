@@ -9,6 +9,7 @@ public class GalleryManager {
     private final File root;
 
     public static final String GALLERY_CONFIG_FILE_NAME = "gallery.json";
+    public static final String FOLDER_CONFIG_FILE_NAME = "collection.json";
     public static final String THUMBNAIL_FOLDER = ".thumbnails";
     public static final String IMAGE_FILE_REGEX = "[\\w-]+(.jpg|.JPG|.png|.PNG|.jpeg|.JPEG|.bmp|.BMP)$";
 
@@ -46,13 +47,10 @@ public class GalleryManager {
                 path.remove(f.getName());
             }
             else if (f.isFile() && f.getName().equals(GALLERY_CONFIG_FILE_NAME)) {
-                /*for (String s : path) {
-                    System.out.print(s + "/");
-                }*/
-                //System.out.println(f.getName());
-                //path.add(0, rootName);
                 this.insertGallery(f, path, rootName);
-                //path.remove(rootName);
+            }
+            else if (f.isFile() && f.getName().equals(FOLDER_CONFIG_FILE_NAME)) {
+                this.insertGallery(f, path, rootName);
             }
         }
     }
@@ -72,23 +70,9 @@ public class GalleryManager {
                 position = child;
                 if (comparison != null) {
                     comparison = comparison.getChildNode(name);
-                /*if (comparison != null && comparison.getChildren().contains(name)) {
-                    comparison = (GalleryNode) comparison.getChildren().get(comparison.getChildren().indexOf((Object)name));
                 }
-                else
-                    comparison = null;*/
-                }
-            } else {
-                /*if (comparison != null && comparison.getChildren().contains(name))
-                    name = "[OK] " + name;*/
-                /*if (comparison != null) {
-                    for (Object s : comparison.getChildren().toArray()) {
-                        System.out.print("" + ((GalleryNode)s).getFileName() + ", ");
-                        if (((GalleryNode)s).getFileName().equals(name) && ((GalleryNode)s).isGallery())
-                            name = "[OK] " + name;
-                    }
-                    System.out.println(" -> " + name);
-                }*/
+            }
+            else {
                 boolean isImported = false;
                 
                 if (comparison != null) {
@@ -99,13 +83,13 @@ public class GalleryManager {
                         comparison = c;
                 }
                 
-                //System.out.println("Adding: " + pathToGallery);
-                GalleryNode g = new GalleryNode(new File(pathToGallery), isImported);
+                File gconf = new File(pathToGallery);
+                if (gconf.getName().equals(FOLDER_CONFIG_FILE_NAME))
+                    gconf = config.getParentFile();
+                GalleryNode g = new GalleryNode(gconf, isImported);
                 position.getChildren().add(g);
                 position = g;
             }
         }
-
-        //position.setConfigFile(config);
     }
 }
