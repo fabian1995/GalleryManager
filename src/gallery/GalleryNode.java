@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import org.json.JSONObject;
 
@@ -23,25 +25,28 @@ public class GalleryNode extends TreeItem {
     private File config;
     
     public enum NodeType {
-        COLLECTION, GALLERY
+        COLLECTION, GALLERY, TRUNK
     }
     
     private NodeType type;
     
     public GalleryNode(File config) {
-        this(config, false, null);
+        this(config, false, null, false);
     }
     
     public GalleryNode(File config, boolean isImported) {
-        this(config, isImported, null);
+        this(config, isImported, null, false);
     }
     
-    public GalleryNode(File config, boolean isImported, String name) {
+    public GalleryNode(File config, boolean isImported, String name, boolean isTrunk) {
         this.isImported = isImported;
         this.config = config;
         
         Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: " + config.getAbsolutePath());
 
+        if (isTrunk)
+            this.type = NodeType.TRUNK;
+        
         if (config.exists() && config.isFile() && config.getName().endsWith(".json")) {
             if (config.getName().equals(GalleryManager.COLLECTION_CONFIG_FILE_NAME))
                 this.type = NodeType.COLLECTION;
@@ -67,7 +72,18 @@ public class GalleryNode extends TreeItem {
             if (this.config != null && this.config.exists() && this.config.isFile())
                 this.saveConfigFile();
         }
-        super.setValue((this.isImported ? "[OK] " : "") + this.name);
+        
+        ImageView icon = new ImageView();
+        if (this.type == NodeType.TRUNK)
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_trunk.png")));
+        else if (this.type == NodeType.COLLECTION)
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_folder.png")));
+        else if (this.isImported)
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
+        else
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
+        super.setGraphic(icon);
+        super.setValue(this.name);
     }
     
     public boolean contains(String nodeName) {

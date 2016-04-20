@@ -207,7 +207,7 @@ public class GalleryMenuController extends BorderPane {
             File newFolder = new File(base.getAbsolutePath() + "/" + result.get());
             newFolder.mkdir();
             if (isGallery) {
-                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get());
+                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get(), false);
                 newGallery.saveConfigFile();
             }
             else {
