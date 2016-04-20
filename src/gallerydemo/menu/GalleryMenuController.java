@@ -208,11 +208,11 @@ public class GalleryMenuController extends BorderPane {
             newFolder.mkdir();
             if (isGallery) {
                 GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get());
-                newGallery.saveConfig();
+                newGallery.saveConfigFile();
             }
             else {
                 try {
-                    new File(newFolder.getAbsolutePath() + "/" + GalleryManager.FOLDER_CONFIG_FILE_NAME).createNewFile();
+                    new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME).createNewFile();
                 } catch (IOException ex) {
                     Logger.getLogger(GalleryMenuController.class.getName()).log(Level.SEVERE, null, ex);
                 }

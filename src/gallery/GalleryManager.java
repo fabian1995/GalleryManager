@@ -9,7 +9,7 @@ public class GalleryManager {
     private final File root;
 
     public static final String GALLERY_CONFIG_FILE_NAME = "gallery.json";
-    public static final String FOLDER_CONFIG_FILE_NAME = "collection.json";
+    public static final String COLLECTION_CONFIG_FILE_NAME = "collection.json";
     public static final String THUMBNAIL_FOLDER = ".thumbnails";
     public static final String IMAGE_FILE_REGEX = "[\\w-]+(.jpg|.JPG|.png|.PNG|.jpeg|.JPEG|.bmp|.BMP)$";
 
@@ -46,10 +46,8 @@ public class GalleryManager {
                 this.search(f, path, rootName);
                 path.remove(f.getName());
             }
-            else if (f.isFile() && f.getName().equals(GALLERY_CONFIG_FILE_NAME)) {
-                this.insertGallery(f, path, rootName);
-            }
-            else if (f.isFile() && f.getName().equals(FOLDER_CONFIG_FILE_NAME)) {
+            else if (f.isFile() && f.getName().equals(GALLERY_CONFIG_FILE_NAME)
+                    || f.isFile() && f.getName().equals(COLLECTION_CONFIG_FILE_NAME)) {
                 this.insertGallery(f, path, rootName);
             }
         }
@@ -83,10 +81,7 @@ public class GalleryManager {
                         comparison = c;
                 }
                 
-                File gconf = new File(pathToGallery);
-                if (gconf.getName().equals(FOLDER_CONFIG_FILE_NAME))
-                    gconf = config.getParentFile();
-                GalleryNode g = new GalleryNode(gconf, isImported);
+                GalleryNode g = new GalleryNode(new File(pathToGallery), isImported);
                 position.getChildren().add(g);
                 position = g;
             }

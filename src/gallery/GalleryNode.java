@@ -17,18 +17,16 @@ public class GalleryNode extends TreeItem {
     public static final String GALLERY_JSON_CONF_ORIGIN = "origin";
 
     private String name;
-    private String fileName;
     private boolean isImported;
     private File origin = null;
 
-    //private final Map<String, GalleryNode> children = new TreeMap<>();
-
     private File config;
-
-    /*public GalleryNode(String name) {
-        super(name);
-        this.name = this.fileName = name;
-    }*/
+    
+    public enum NodeType {
+        COLLECTION, GALLERY
+    }
+    
+    private NodeType type;
     
     public GalleryNode(File config) {
         this(config, false, null);
@@ -40,7 +38,36 @@ public class GalleryNode extends TreeItem {
     
     public GalleryNode(File config, boolean isImported, String name) {
         this.isImported = isImported;
-        this.setConfigFile(config, name);
+        this.config = config;
+        
+        Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: " + config.getAbsolutePath());
+
+        if (config.exists() && config.isFile() && config.getName().endsWith(".json")) {
+            if (config.getName().equals(GalleryManager.COLLECTION_CONFIG_FILE_NAME))
+                this.type = NodeType.COLLECTION;
+            else if (config.getName().equals(GalleryManager.GALLERY_CONFIG_FILE_NAME))
+                this.type = NodeType.GALLERY;
+            this.readConfigFile();
+        }
+        else if(name == null && config.exists()) {
+            this.type = NodeType.COLLECTION;
+            this.config = new File(config.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME);
+            if (this.config.exists()) {
+                this.readConfigFile();
+            }
+            else {
+                this.name = config.getName();
+                this.saveConfigFile();
+            }
+            
+        }
+        else {
+            this.name = name;
+            this.origin = null;
+            if (this.config != null && this.config.exists() && this.config.isFile())
+                this.saveConfigFile();
+        }
+        super.setValue((this.isImported ? "[OK] " : "") + this.name);
     }
     
     public boolean contains(String nodeName) {
@@ -52,11 +79,8 @@ public class GalleryNode extends TreeItem {
     }
     
     public GalleryNode getChildNode(String nodeName) {
-        //System.out.println("Searching for: " + nodeName);
         for (Object s : this.getChildren().toArray()) {
-            //System.out.println("...found: " + ((GalleryNode)s).getFileName());
             if (((GalleryNode)s).getFileName().equals(nodeName)) {
-                //System.out.println("MATCHES");
                 return (GalleryNode)s;
             }
         }
@@ -67,9 +91,9 @@ public class GalleryNode extends TreeItem {
         this.getChildren().sort(Comparator.comparing((GalleryNode g) -> {
             return g.isGallery();
         }).thenComparing((GalleryNode g1, GalleryNode g2) -> g1.getName().compareTo(g2.getName())));
-        for (Object g : this.getChildren()) {
+        this.getChildren().stream().forEach((g) -> {
             ((GalleryNode)g).sortChildren();
-        }
+        });
     }
 
     @Override
@@ -80,14 +104,6 @@ public class GalleryNode extends TreeItem {
     public boolean isImported() {
         return this.isImported;
     }
-
-    /*public void addChild(GalleryNode child) {
-        this.children.put(child.name, child);
-    }*/
-
-    /*public Map<String, GalleryNode> getChildren() {
-        return this.children;
-    }*/
 
     public String getName() {
         return this.name;
@@ -110,7 +126,7 @@ public class GalleryNode extends TreeItem {
     }
 
     public boolean isGallery() {
-        return this.config.isFile();
+        return this.type == NodeType.GALLERY;
     }
     
     public File[] listImages() {
@@ -132,26 +148,6 @@ public class GalleryNode extends TreeItem {
         }
     }
 
-    private void setConfigFile(File config, String name) {
-        this.config = config;
-
-        Logger.getLogger("logfile").log(Level.INFO, "[log] Reading config: " + config.getAbsolutePath());
-        
-        if (config.exists() && config.isFile() && config.getName().endsWith(".json")) {
-            this.readConfigFile();
-        }
-        else if(name == null) {
-            this.name = config.getName();
-        }
-        else {
-            this.name = name;
-            this.origin = null;
-            if (this.config != null && this.config.exists() && this.config.isFile())
-                this.saveConfig();
-        }
-        super.setValue((this.isImported ? "[OK] " : "") + this.name);
-    }
-
     private void readConfigFile() {
 
         String rawJSON = null;
@@ -166,19 +162,23 @@ public class GalleryNode extends TreeItem {
         JSONObject rootObject = new JSONObject(rawJSON);
 
         this.name = rootObject.getString(GALLERY_JSON_CONF_NAME);
-        this.origin = new File(rootObject.getString(GALLERY_JSON_CONF_ORIGIN));
+        if (this.type == NodeType.GALLERY)
+            this.origin = new File(rootObject.getString(GALLERY_JSON_CONF_ORIGIN));
     }
     
-    public void saveConfig() {
-        JSONObject config = new JSONObject();
-        config.put(GALLERY_JSON_CONF_NAME, this.name);
-        if (this.origin == null)
-            config.put(GALLERY_JSON_CONF_ORIGIN, "");
-        else
-            config.put(GALLERY_JSON_CONF_ORIGIN, this.origin.getAbsolutePath());
+    public void saveConfigFile() {
+        JSONObject configObject = new JSONObject();
+        configObject.put(GALLERY_JSON_CONF_NAME, this.name);
+        
+        if (this.type == NodeType.GALLERY) {
+            if (this.origin == null)
+                configObject.put(GALLERY_JSON_CONF_ORIGIN, "");
+            else
+                configObject.put(GALLERY_JSON_CONF_ORIGIN, this.origin.getAbsolutePath());
+        }
         
         try (FileWriter configFile = new FileWriter(this.config)) {
-            configFile.write(config.toString());
+            configFile.write(configObject.toString());
         } catch (IOException ex) {
             Logger.getLogger(GalleryNode.class.getName()).log(Level.SEVERE, null, ex);
         }

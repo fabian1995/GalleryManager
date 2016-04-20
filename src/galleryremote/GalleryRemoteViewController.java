@@ -84,7 +84,7 @@ public class GalleryRemoteViewController implements Initializable {
                         }
                         GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME));
                         importedGallery.setOrigin(gallery.getConfigFile());
-                        importedGallery.saveConfig();
+                        importedGallery.saveConfigFile();
                     } else {
                         Logger.getLogger("logfile").info("Did NOT import " + gallery.getFileName() );
                     }
