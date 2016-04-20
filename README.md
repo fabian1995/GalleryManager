@@ -19,7 +19,8 @@ Already implemented:
 
 On my TODO-list:
 * Export existing galleries to the server
-* Create directories for galleries and improve gallery management
+* Further gallery and folder management options (delete, rename, ...)
+* Mulit-language support
 * Tag images with categories, add images to favourites or hide them
 * Create GUI for first the setup of GalleryManager
 
@@ -41,5 +42,4 @@ I hve not yet added a GUI that creates the basic configuration file that Gallery
     "remoteGalleryLocation": "/path/to/server"
 }
 ```
-If you want to use GalleryManager without a remote location or NAS, leave the value for "remoteGalleryLocation" blank (empty string).
-I will add some examples for the configuration within the next days.
+For details, see the files in the "examples" folder.
