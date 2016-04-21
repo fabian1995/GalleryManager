@@ -145,6 +145,11 @@ public class GalleryNode extends TreeItem {
     
     public void setOrigin(File origin) {
         this.origin = origin;
+        if (this.origin.exists()) {
+            ImageView icon = new ImageView();
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_cloud.png")));
+            super.setGraphic(icon);
+        }
     }
 
     public boolean isGallery() {

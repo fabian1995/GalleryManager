@@ -27,8 +27,12 @@
             
             <Separator orientation="VERTICAL"/>
             
-            <Button text="Exportieren" fx:id="exportGalleryButton" id="button-export" styleClass="topMenuButton"/>
-            <Button text="Synchronisieren" fx:id="syncGalleryButton" id="button-sync" styleClass="topMenuButton"/>
+            <StackPane>
+                <children>
+                    <Button text="Exportieren" fx:id="exportGalleryButton" id="button-export" styleClass="topMenuButton"/>
+                    <Button text="Synchronisieren" fx:id="syncGalleryButton" id="button-sync" styleClass="topMenuButton"/>
+                </children>
+            </StackPane>
         </HBox>
     </center>
 </fx:root>

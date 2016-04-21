@@ -117,9 +117,12 @@ public final class GalleryMenuController extends AbstractMenu {
                                 || pathname.getName().matches(GalleryManager.IMAGE_FILE_REGEX);
                     }
                 });
+                g.setOrigin(target);
+                g.saveConfigFile();
             } catch (IOException ex) {
                 Logger.getLogger(GalleryRemoteViewController.class.getName()).log(Level.SEVERE, null, ex);
             }
+            this.actualizeButtons();
         });
         
         this.addimgGalleryButton.setOnAction((ActionEvent event)  -> {
@@ -144,13 +147,24 @@ public final class GalleryMenuController extends AbstractMenu {
     
     @Override
     public void actualizeButtons() {
-        if (this.controller.getActiveGallery() == null
-                || !this.controller.getActiveGallery().isGallery()
-                || !this.controller.getActiveGallery().getOrigin().exists()) {
-            this.syncGalleryButton.setDisable(true);
+        if (this.controller.getActiveGallery() != null
+                && this.controller.getActiveGallery().isGallery()) {
+            
+            if (this.controller.getActiveGallery().getOrigin().exists()) {
+                this.syncGalleryButton.setVisible(true);
+                this.exportGalleryButton.setVisible(false);
+            }
+            else {
+                this.syncGalleryButton.setVisible(false);
+                this.exportGalleryButton.setVisible(true);
+            }
+            this.exportGalleryButton.setDisable(false);
         }
-        else
-            this.syncGalleryButton.setDisable(false);
+        else {
+            this.syncGalleryButton.setVisible(false);
+            this.exportGalleryButton.setVisible(true);
+            this.exportGalleryButton.setDisable(true);
+        }
         
         if (this.controller.getActiveGallery() != null
                 && this.controller.getActiveGallery().isGallery()) {
