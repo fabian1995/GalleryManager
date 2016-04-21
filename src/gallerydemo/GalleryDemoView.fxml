@@ -20,19 +20,6 @@
             <HBox spacing="10" alignment="BOTTOM_LEFT" 
                   BorderPane.alignment="CENTER"
                   fx:id="menuBar">
-
-                <BorderPane styleClass="alwaysActive">
-                    <top>
-                        <VBox alignment="BASELINE_CENTER"> 
-                            <Text text="Ort"/>
-                            <Separator orientation="HORIZONTAL"/>
-                        </VBox>
-                    </top>
-                    <center>
-                        <Button text="Bilder" id="button-location" styleClass="topMenuButton"/>
-                        <!--<Button text="v" styleClass="topMenuDropDown"/>-->
-                    </center>
-                </BorderPane>
             </HBox>
         </top>
 

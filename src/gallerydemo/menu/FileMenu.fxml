@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox alignment="BASELINE_CENTER"> 
+            <Text text="Orte und Dateien"/>
+            <Separator orientation="HORIZONTAL"/>
+        </VBox>
+    </top>
+    <center>
+        <HBox alignment="BASELINE_CENTER">
+            <Button text="Lokale Bilder" fx:id="locationButton" id="button-location" styleClass="topMenuButton"/>
+            <Button text="Importieren" fx:id="importGalleryButton" id="button-import" styleClass="topMenuButton"/>
+        </HBox>
+    </center>
+</fx:root>

@@ -9,7 +9,6 @@ import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallerycompare.GalleryCompareView;
 import gallerydemo.GalleryDemoViewController;
-import galleryremote.GalleryRemoteView;
 import galleryremote.GalleryRemoteViewController;
 import java.io.File;
 import java.io.FileFilter;
@@ -22,12 +21,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -38,9 +35,7 @@ import org.apache.commons.io.FileUtils;
  *
  * @author fabian
  */
-public class GalleryMenuController extends BorderPane {
-
-    private final GalleryDemoViewController controller;
+public final class GalleryMenuController extends AbstractMenu {
     
     private final FileChooser fileChooser = new FileChooser();
 
@@ -60,9 +55,6 @@ public class GalleryMenuController extends BorderPane {
     private Button addimgGalleryButton;
     
     @FXML
-    private Button importGalleryButton;
-    
-    @FXML
     private Button exportGalleryButton;
     
     @FXML
@@ -72,17 +64,7 @@ public class GalleryMenuController extends BorderPane {
 
     public GalleryMenuController(GalleryDemoViewController controller) {
 
-        this.controller = controller;
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("GalleryMenu.fxml"));
-        fxmlLoader.setRoot((BorderPane) this);
-        fxmlLoader.setController((BorderPane) this);
-
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+        super(controller, "GalleryMenu.fxml");
 
         this.actualizeButtons();
 
@@ -120,19 +102,6 @@ public class GalleryMenuController extends BorderPane {
                 });
                 controller.disableInput(g.getName() + "wird synchronisiert...");
             }
-        });
-
-        this.importGalleryButton.setOnAction((ActionEvent event) -> {
-            Parent root1 = new GalleryRemoteView(controller.getRemoteGalleryLocation(), controller.getRoot());
-            Stage stage = new Stage();
-            stage.setTitle("Gallerien importieren...");
-            stage.setScene(new Scene(root1));
-            stage.show();
-            stage.setOnCloseRequest((WindowEvent we) -> {
-                controller.enableInput();
-                this.controller.reloadTreeItems();
-            });
-            controller.disableInput("Gallerien werden hinzugefügt...");
         });
         
         this.exportGalleryButton.setOnAction((ActionEvent event)  -> {
@@ -173,6 +142,7 @@ public class GalleryMenuController extends BorderPane {
         });
     }
     
+    @Override
     public void actualizeButtons() {
         if (this.controller.getActiveGallery() == null
                 || !this.controller.getActiveGallery().isGallery()
@@ -188,13 +158,6 @@ public class GalleryMenuController extends BorderPane {
         }
         else {
             this.addimgGalleryButton.setDisable(true);
-        }
-
-        if (!this.controller.getRemoteGalleryLocation().exists()) {
-            this.importGalleryButton.setDisable(true);
-        }
-        else {
-            this.importGalleryButton.setDisable(false);
         }
     }
     

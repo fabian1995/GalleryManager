@@ -27,7 +27,6 @@
             
             <Separator orientation="VERTICAL"/>
             
-            <Button text="Importieren" fx:id="importGalleryButton" id="button-import" styleClass="topMenuButton"/>
             <Button text="Exportieren" fx:id="exportGalleryButton" id="button-export" styleClass="topMenuButton"/>
             <Button text="Synchronisieren" fx:id="syncGalleryButton" id="button-sync" styleClass="topMenuButton"/>
         </HBox>
