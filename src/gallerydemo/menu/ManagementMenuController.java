@@ -15,8 +15,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
+import org.apache.commons.io.FileUtils;
 
 /**
  * FXML Controller class
@@ -27,16 +31,15 @@ public final class ManagementMenuController extends AbstractMenu {
 
     @FXML
     private Button newGalleryButton;
-    
+
     @FXML
     private Button newFolderButton;
 
     @FXML
     private Button galleryPropertiesButton;
-    
+
     @FXML
     private Button deleteGalleryButton;
-
 
     public ManagementMenuController(GalleryDemoViewController controller) {
 
@@ -45,30 +48,76 @@ public final class ManagementMenuController extends AbstractMenu {
         this.actualizeButtons();
 
         // TODO Implement features for these buttons
-        this.galleryPropertiesButton.setDisable(true);
-        this.deleteGalleryButton.setDisable(true);
-        
+        //this.galleryPropertiesButton.setDisable(true);
+        //this.deleteGalleryButton.setDisable(true);
+
         this.newGalleryButton.setOnAction((ActionEvent event) -> {
             this.createGalleryOrFolder(true);
         });
-        
+
         this.newFolderButton.setOnAction((ActionEvent event) -> {
             this.createGalleryOrFolder(false);
         });
+
+        this.galleryPropertiesButton.setOnAction((ActionEvent event) -> {
+            GalleryNode g = this.controller.getActiveGallery();
+
+            if (g.isTrunk()) {
+                return;
+            }
+
+            TextInputDialog dialog = new TextInputDialog(g.getName());
+            dialog.setTitle("Umbenennen");
+            dialog.setHeaderText(g.isGallery() ? "Die ausgewählte Galerie umbenennen"
+                    : "Den ausgewählten Ordner umbenennen");
+            dialog.setContentText("Neuer Name:");
+
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                g.setName(result.get());
+                g.saveConfigFile();
+            }
+        });
+
+        this.deleteGalleryButton.setOnAction((ActionEvent event) -> {
+            GalleryNode g = this.controller.getActiveGallery();
+
+            if (g.isTrunk()) {
+                return;
+            }
+
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Löschen");
+            alert.setHeaderText(g.isGallery() ? "Die ausgewählte Galerie löschen?"
+                    : "Den ausgewählten Ordner löschen?");
+            alert.setContentText("Unwiederruflicher Vorgang!");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                System.out.println("DELETING " + g.getLocation());
+                try {
+                    FileUtils.deleteDirectory(g.getLocation());
+                } catch (IOException ex) {
+                    Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+                } finally {
+                    this.controller.reloadTreeItems();
+                }
+            }
+        });
     }
-    
+
     @Override
-    public void actualizeButtons () {}
-    
+    public void actualizeButtons() {
+    }
+
     private void createGalleryOrFolder(boolean isGallery) {
         GalleryNode g = this.controller.getActiveGallery();
         File base;
-        if (g == null)
+        if (g == null) {
             base = this.controller.getLocalGalleryLocation();
-        else if (g.isGallery())
-            base = g.getLocation().getParentFile();
-        else
-            base = new File(g.getLocation().getAbsolutePath() + "/" + g.getFileName());
+        } else {
+            base = g.getLocation();
+        }
 
         TextInputDialog dialog = new TextInputDialog(
                 isGallery ? "Neue Galerie" : "Neuer Ordner");
@@ -82,23 +131,22 @@ public final class ManagementMenuController extends AbstractMenu {
         this.controller.disableInput(
                 isGallery ? "Galerie wird erstellt...\nBitte einen Namen eingeben."
                         : "Ordner wird erstellt...\nBitte einen Namen eingeben.");
-        Optional<String> result = dialog.showAndWait();
 
+        Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             File newFolder = new File(base.getAbsolutePath() + "/" + result.get());
             newFolder.mkdir();
+            System.out.println("mkdir " + newFolder.getPath());
             if (isGallery) {
                 GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get(), false);
                 newGallery.saveConfigFile();
-            }
-            else {
-                try {
-                    new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME).createNewFile();
-                } catch (IOException ex) {
-                    Logger.getLogger(ManagementMenuController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            } else {
+                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME), false, result.get(), false);
+                newGallery.saveConfigFile();
             }
             this.controller.reloadTreeItems();
+            if (g != null)
+                g.setExpanded(true);
         }
 
         this.controller.enableInput();

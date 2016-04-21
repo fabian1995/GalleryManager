@@ -61,13 +61,13 @@ public class GalleryNode extends TreeItem {
                 this.readConfigFile();
             }
             else {
-                this.name = config.getName();
+                this.setName(config.getName());
                 this.saveConfigFile();
             }
             
         }
         else {
-            this.name = name;
+            this.setName(name);
             this.origin = null;
             if (this.config != null && this.config.exists() && this.config.isFile())
                 this.saveConfigFile();
@@ -85,7 +85,6 @@ public class GalleryNode extends TreeItem {
         else
             icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
         super.setGraphic(icon);
-        super.setValue(this.name);
     }
     
     public boolean contains(String nodeName) {
@@ -127,6 +126,11 @@ public class GalleryNode extends TreeItem {
         return this.name;
     }
     
+    public void setName(String name) {
+        this.name = name;
+        super.setValue(name);
+    }
+    
     public String getFileName() {
         return this.config.isFile() ? this.config.getParentFile().getName() : this.config.getName();
     }
@@ -154,6 +158,10 @@ public class GalleryNode extends TreeItem {
 
     public boolean isGallery() {
         return this.type == NodeType.GALLERY;
+    }
+    
+    public boolean isTrunk() {
+        return this.type == NodeType.TRUNK;
     }
     
     public File[] listImages() {
@@ -188,7 +196,7 @@ public class GalleryNode extends TreeItem {
 
         JSONObject rootObject = new JSONObject(rawJSON);
 
-        this.name = rootObject.getString(GALLERY_JSON_CONF_NAME);
+        this.setName(rootObject.getString(GALLERY_JSON_CONF_NAME));
         if (this.type == NodeType.GALLERY)
             this.origin = new File(rootObject.getString(GALLERY_JSON_CONF_ORIGIN));
     }
@@ -196,6 +204,14 @@ public class GalleryNode extends TreeItem {
     public void saveConfigFile() {
         JSONObject configObject = new JSONObject();
         configObject.put(GALLERY_JSON_CONF_NAME, this.name);
+        
+        // TODO is this the best way to assign the node type?
+        if (this.type == null) {
+            if (this.config.getName().equals(GalleryManager.GALLERY_CONFIG_FILE_NAME))
+                this.type = NodeType.GALLERY;
+            else
+                this.type = NodeType.COLLECTION;
+        }
         
         if (this.type == NodeType.GALLERY) {
             if (this.origin == null)

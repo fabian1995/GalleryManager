@@ -18,7 +18,7 @@
         <HBox alignment="BASELINE_CENTER">
             <Button text="Neue Gallerie" fx:id="newGalleryButton" id="button-new" styleClass="topMenuButton"/>
             <Button text="Neuer Ordner" fx:id="newFolderButton" id="button-newfolder" styleClass="topMenuButton"/>
-            <Button text="Bearbeiten" fx:id="galleryPropertiesButton" id="button-properties" styleClass="topMenuButton"/>
+            <Button text="Umbenennen" fx:id="galleryPropertiesButton" id="button-properties" styleClass="topMenuButton"/>
             <Button text="Löschen" fx:id="deleteGalleryButton" id="button-del" styleClass="topMenuButton"/>
         </HBox>
     </center>
