@@ -80,6 +80,8 @@ public class GalleryNode extends TreeItem {
             icon.setImage(new Image(getClass().getResourceAsStream("icon_folder.png")));
         else if (this.isImported)
             icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
+        else if (this.hasOrigin())
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_cloud.png")));
         else
             icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
         super.setGraphic(icon);
@@ -135,6 +137,10 @@ public class GalleryNode extends TreeItem {
 
     public File getOrigin() {
         return this.origin;
+    }
+    
+    public boolean hasOrigin() {
+        return this.origin != null && !this.origin.getPath().equals("");
     }
     
     public void setOrigin(File origin) {
