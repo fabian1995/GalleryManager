@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * asdf
+ * Each line should be prefixed with  * 
  */
 package gallerydemo.menu;
 
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -24,7 +22,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -40,18 +37,6 @@ public final class GalleryMenuController extends AbstractMenu {
     private final FileChooser fileChooser = new FileChooser();
 
     @FXML
-    private Button newGalleryButton;
-    
-    @FXML
-    private Button newFolderButton;
-
-    @FXML
-    private Button galleryPropertiesButton;
-    
-    @FXML
-    private Button deleteGalleryButton;
-    
-    @FXML
     private Button addimgGalleryButton;
     
     @FXML
@@ -60,17 +45,10 @@ public final class GalleryMenuController extends AbstractMenu {
     @FXML
     private Button syncGalleryButton;
     
-    
-
     public GalleryMenuController(GalleryDemoViewController controller) {
-
         super(controller, "GalleryMenu.fxml");
-
+        
         this.actualizeButtons();
-
-        // TODO Implement features for these buttons
-        this.galleryPropertiesButton.setDisable(true);
-        this.deleteGalleryButton.setDisable(true);
         
         // Add extension filter to file chooser
         this.fileChooser.getExtensionFilters().addAll(
@@ -79,14 +57,6 @@ public final class GalleryMenuController extends AbstractMenu {
             new FileChooser.ExtensionFilter("PNG", "*.png")
         );
         
-        this.newGalleryButton.setOnAction((ActionEvent event) -> {
-            this.createGalleryOrFolder(true);
-        });
-        
-        this.newFolderButton.setOnAction((ActionEvent event) -> {
-            this.createGalleryOrFolder(false);
-        });
-
         this.syncGalleryButton.setOnAction((ActionEvent event) -> {
             GalleryNode g = controller.getActiveGallery();
 
@@ -173,49 +143,5 @@ public final class GalleryMenuController extends AbstractMenu {
         else {
             this.addimgGalleryButton.setDisable(true);
         }
-    }
-    
-    private void createGalleryOrFolder(boolean isGallery) {
-        GalleryNode g = this.controller.getActiveGallery();
-        File base;
-        if (g == null)
-            base = this.controller.getLocalGalleryLocation();
-        else if (g.isGallery())
-            base = g.getLocation().getParentFile();
-        else
-            base = new File(g.getLocation().getAbsolutePath() + "/" + g.getFileName());
-
-        TextInputDialog dialog = new TextInputDialog(
-                isGallery ? "Neue Galerie" : "Neuer Ordner");
-        dialog.setTitle(
-                isGallery ? "Neue Galerie erstellen" : "Neuen Ordner erstellen");
-        dialog.setHeaderText(
-                isGallery ? "Bitte geben Sie den Namen der neuen Galerie ein"
-                        : "Bitte geben Sie den Namen des neuen Ordners ein");
-        dialog.setContentText("Name: ");
-
-        this.controller.disableInput(
-                isGallery ? "Galerie wird erstellt...\nBitte einen Namen eingeben."
-                        : "Ordner wird erstellt...\nBitte einen Namen eingeben.");
-        Optional<String> result = dialog.showAndWait();
-
-        if (result.isPresent()) {
-            File newFolder = new File(base.getAbsolutePath() + "/" + result.get());
-            newFolder.mkdir();
-            if (isGallery) {
-                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get(), false);
-                newGallery.saveConfigFile();
-            }
-            else {
-                try {
-                    new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME).createNewFile();
-                } catch (IOException ex) {
-                    Logger.getLogger(GalleryMenuController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            this.controller.reloadTreeItems();
-        }
-
-        this.controller.enableInput();
     }
 }

@@ -9,6 +9,7 @@ import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallery.load.ImageLoaderService;
 import gallerydemo.menu.FileMenuController;
+import gallerydemo.menu.ManagementMenuController;
 import gallerydemo.menu.GalleryMenuController;
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +65,7 @@ public class GalleryDemoViewController implements Initializable {
     private final GalleryManager galleryManager;
     
     private FileMenuController fileMenuController;
+    private ManagementMenuController managementMenuController;
     private GalleryMenuController galleryMenuController;
     
     private ImageLoaderService currentTask = null;
@@ -116,6 +118,9 @@ public class GalleryDemoViewController implements Initializable {
         
         this.fileMenuController = new FileMenuController(this);
         this.menuBar.getChildren().add(this.fileMenuController);
+        
+        this.managementMenuController = new ManagementMenuController(this);
+        this.menuBar.getChildren().add(this.managementMenuController);
         
         this.galleryMenuController = new GalleryMenuController(this);
         this.menuBar.getChildren().add(this.galleryMenuController);
