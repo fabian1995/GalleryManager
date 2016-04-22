@@ -8,7 +8,6 @@ package gallerycompare;
 import gallery.GalleryNode;
 import gallery.comparison.GalleryComparison;
 import gallerycompare.filelist.FileListElement;
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -43,7 +42,7 @@ public class GalleryCompareViewController implements Initializable {
         //comp.printStats();
         Logger.getLogger("logfile").info("[init] GalleryCompareView");
         
-        this.compareSplitPane.getItems().add(new FileListElement(comp, 0));
-        this.compareSplitPane.getItems().add(new FileListElement(comp, 1));
+        this.compareSplitPane.getItems().add(new FileListElement(comp, 0, "Neu auf diesem Computer"));
+        this.compareSplitPane.getItems().add(new FileListElement(comp, 1, "Neu am Server"));
     }
 }

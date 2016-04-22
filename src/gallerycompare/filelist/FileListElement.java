@@ -57,7 +57,7 @@ public class FileListElement extends BorderPane {
     @FXML
     private ImageView imagePreview;
     
-    public FileListElement (GalleryComparison comparison, int locationID) {
+    public FileListElement (GalleryComparison comparison, int locationID, String title) {
         
         this.comparison = comparison;
         this.locationID = locationID;
@@ -78,7 +78,7 @@ public class FileListElement extends BorderPane {
         this.fileListView.setItems(this.fileList);
         this.fileListView.setEditable(false);
         
-        this.titleElement.setText("Neu in " + this.comparison.getGallery(locationID).getName());
+        this.titleElement.setText(title);
         
         this.buttonCopy.setDisable(true);
         this.buttonDelete.setDisable(true);
