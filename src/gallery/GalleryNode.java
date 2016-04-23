@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TreeItem;
@@ -13,7 +16,7 @@ import javafx.scene.image.ImageView;
 
 import org.json.JSONObject;
 
-public class GalleryNode extends TreeItem {
+public final class GalleryNode extends TreeItem {
     
     public static final String GALLERY_JSON_CONF_NAME = "name";
     public static final String GALLERY_JSON_CONF_ORIGIN = "origin";
@@ -23,6 +26,8 @@ public class GalleryNode extends TreeItem {
     private File origin = null;
 
     private File config;
+    
+    private final List<GalleryImage> imageList = new LinkedList<>();
     
     public enum NodeType {
         COLLECTION, GALLERY, TRUNK
@@ -42,7 +47,7 @@ public class GalleryNode extends TreeItem {
         this.isImported = isImported;
         this.config = config;
         
-        Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: " + config.getAbsolutePath());
+        Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: {0}", config.getAbsolutePath());
 
         if (isTrunk)
             this.type = NodeType.TRUNK;
@@ -85,6 +90,8 @@ public class GalleryNode extends TreeItem {
         else
             icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
         super.setGraphic(icon);
+        
+        this.createImageList();
     }
     
     public boolean contains(String nodeName) {
@@ -164,10 +171,33 @@ public class GalleryNode extends TreeItem {
         return this.type == NodeType.TRUNK;
     }
     
+    @Deprecated
     public File[] listImages() {
         return this.getLocation().listFiles((File dir, String fileName) -> {
             return fileName.toLowerCase().matches(GalleryManager.IMAGE_FILE_REGEX);
         });
+    }
+    
+    public void createImageList() {
+        this.imageList.clear();
+        
+        File[] fileList = this.getLocation().listFiles((File dir, String fileName) -> {
+            return fileName.toLowerCase().matches(GalleryManager.IMAGE_FILE_REGEX);
+        });
+        
+        for (File f : fileList) {
+            try {
+                this.imageList.add(new GalleryImage(f));
+            } catch (IOException ex) {
+                Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        Collections.sort(this.imageList);
+    }
+    
+    public List<GalleryImage> getImageList() {
+        return this.imageList;
     }
 
     public File getConfigFile() {

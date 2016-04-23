@@ -1,16 +1,14 @@
 package gallery.load;
 
+import gallery.GalleryImage;
 import gallery.GalleryManager;
 import java.io.File;
-import java.io.FilenameFilter;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
 
 import gallery.GalleryNode;
 import gallerydemo.imageView.ImageViewContainerController;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -39,18 +37,15 @@ public class ImageLoader extends Task {
                 }
         });*/
         gallery.createThumbnailFolder();
-        File[] files = gallery.listImages();
+        List<GalleryImage> images = gallery.getImageList();
 
-        for (int i = 0; i < files.length && !isCancelled(); i++) {
-            File image = files[i];
-            ImageView iv = this.loadOrCreateThumbnail(image);
+        for (int i = 0; i < images.size() && !isCancelled(); i++) {
+            GalleryImage image = images.get(i);
+            ImageView iv = this.loadOrCreateThumbnail(image.file);
             
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isCancelled())
-                    imagePane.getChildren().add(new ImageViewContainerController(iv.getImage(), 1200, 800));
-                }
+            Platform.runLater(() -> {
+                if (!isCancelled())
+                    imagePane.getChildren().add(new ImageViewContainerController(image, iv.getImage()));
             });
         }
         return null;

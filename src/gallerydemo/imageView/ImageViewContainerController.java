@@ -5,6 +5,7 @@
  */
 package gallerydemo.imageView;
 
+import gallery.GalleryImage;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,8 @@ import javafx.scene.text.Text;
  */
 public class ImageViewContainerController extends StackPane {
     
+    private final GalleryImage model;
+    
     @FXML
     private ImageView stackBottomImageView;
     
@@ -30,11 +33,11 @@ public class ImageViewContainerController extends StackPane {
     @FXML
     private Text resolutionText;
     
-    public ImageViewContainerController(Image image, int originalWidth, int originalHeight) {
+    public ImageViewContainerController(GalleryImage model, Image thumbnail) {
         
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImageViewContainer.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
+        fxmlLoader.setRoot((StackPane)this);
+        fxmlLoader.setController((StackPane)this);
         
         try {
             fxmlLoader.load();            
@@ -42,9 +45,11 @@ public class ImageViewContainerController extends StackPane {
             throw new RuntimeException(exception);
         }
         
-        this.stackBottomImageView.setImage(image);
+        this.model = model;
+        
+        this.stackBottomImageView.setImage(thumbnail);
         this.stackTopInfoPane.setVisible(false);
         
-        this.resolutionText.setText("" + originalWidth + " x " + originalHeight + " px");
+        //this.resolutionText.setText("" + originalWidth + " x " + originalHeight + " px");
     }
 }
