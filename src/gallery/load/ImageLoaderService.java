@@ -6,6 +6,7 @@
 package gallery.load;
 
 import gallery.GalleryNode;
+import gallerydemo.GalleryDemoViewController;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.layout.FlowPane;
@@ -16,17 +17,19 @@ import javafx.scene.layout.FlowPane;
  */
 public class ImageLoaderService extends Service {
 
+    private final GalleryDemoViewController controller;
     private final FlowPane imagePane;
     private final GalleryNode gallery;
     
-    public ImageLoaderService (GalleryNode gallery, FlowPane imagePane) {
+    public ImageLoaderService (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane) {
+        this.controller = controller;
         this.imagePane = imagePane;
         this.gallery = gallery;
     }
     
     @Override
     protected Task createTask() {
-        return new ImageLoader(gallery, imagePane);
+        return new ImageLoader(controller, gallery, imagePane);
     }
     
 }

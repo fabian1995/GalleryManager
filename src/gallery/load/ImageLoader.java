@@ -5,6 +5,7 @@ import gallery.GalleryManager;
 import java.io.File;
 
 import gallery.GalleryNode;
+import gallerydemo.GalleryDemoViewController;
 import gallerydemo.imageView.ImageViewContainerController;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -19,10 +20,12 @@ import javax.imageio.ImageIO;
 
 public class ImageLoader extends Task {
 
+    private final GalleryDemoViewController controller;
     private final FlowPane imagePane;
     private final GalleryNode gallery;
 
-    public ImageLoader (GalleryNode gallery, FlowPane imagePane) {
+    public ImageLoader (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane) {
+        this.controller = controller;
         this.imagePane = imagePane;
         this.gallery = gallery;
     }
@@ -45,7 +48,7 @@ public class ImageLoader extends Task {
             
             Platform.runLater(() -> {
                 if (!isCancelled())
-                    imagePane.getChildren().add(new ImageViewContainerController(image, iv.getImage()));
+                    imagePane.getChildren().add(new ImageViewContainerController(controller, image, iv.getImage()));
             });
         }
         return null;

@@ -5,6 +5,7 @@
  */
 package gallerydemo;
 
+import gallery.GalleryImage;
 import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallery.load.ImageLoaderService;
@@ -17,13 +18,20 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.json.JSONObject;
 
@@ -42,6 +50,15 @@ public class GalleryDemoViewController implements Initializable {
 
     @FXML
     private ScrollPane scrollImageContainer;
+    
+    @FXML
+    private BorderPane fullScreenImageContainer;
+    
+    @FXML
+    private VBox fullScreenPane;
+    
+    @FXML
+    private ImageView fullScreenImage;
     
     @FXML
     private FlowPane imagePane;
@@ -65,7 +82,15 @@ public class GalleryDemoViewController implements Initializable {
     private ManagementMenuController managementMenuController;
     private GalleryMenuController galleryMenuController;
     
+    private EventHandler<MouseEvent> exitFullScreenHandler;
+    
     private ImageLoaderService currentTask = null;
+    
+    enum ViewState {
+        BROWSE, IMAGE
+    }
+    
+    private ViewState currentViewState;
     
     public GalleryDemoViewController() {
         this.readConfigFile();
@@ -73,19 +98,35 @@ public class GalleryDemoViewController implements Initializable {
     }
 
     public void setActiveGallery(GalleryNode g) {
+        
+        this.setViewState(ViewState.BROWSE);
+        
         this.activeGallery = g;
         this.galleryMenuController.actualizeButtons();
         this.managementMenuController.actualizeButtons();
+        
+        if (this.activeGallery != null && this.activeGallery.isGallery()) {
+            this.reloadGalleryImages(this.activeGallery);
+        } else {
+            this.imagePane.getChildren().clear();
+        }
+    }
+    
+    public void enableFullImageView(GalleryImage g) {
+        this.setViewState(ViewState.IMAGE);
+        this.fullScreenImage.setImage(new Image("file:" + g.file));
+        this.locationTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
+    }
+    
+    public void disableFullImageView() {
+        this.setViewState(ViewState.BROWSE);
+        this.locationTreeView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
     }
     
     public GalleryNode getActiveGallery() {
         return this.activeGallery;
     }
 
-    public FlowPane getImagePane() {
-        return this.imagePane;
-    }
-    
     public File getLocalGalleryLocation() {
         return this.localGalleryLocation;
     }
@@ -109,8 +150,12 @@ public class GalleryDemoViewController implements Initializable {
         this.scrollImageContainer.setFitToHeight(true);
         this.scrollImageContainer.setFitToWidth(true);
 
-        this.locationTreeView.getSelectionModel().selectedItemProperty()
-                .addListener(new GalleryDemoViewListener(this));
+        this.locationTreeView.getSelectionModel().selectedItemProperty().addListener(
+                (ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldValue, TreeItem<String> newValue) -> {
+                    this.setActiveGallery((GalleryNode) newValue);
+                });
+        
+        this.exitFullScreenHandler = (MouseEvent) -> {this.setViewState(ViewState.BROWSE);};
         
         this.locationTreeView.getRoot().setExpanded(true);
         
@@ -122,6 +167,26 @@ public class GalleryDemoViewController implements Initializable {
         
         this.galleryMenuController = new GalleryMenuController(this);
         this.menuBar.getChildren().add(this.galleryMenuController);
+        
+        this.setViewState(ViewState.BROWSE);
+        
+        this.fullScreenImage.fitWidthProperty().bind(this.fullScreenPane.widthProperty());
+        this.fullScreenImage.fitHeightProperty().bind(this.fullScreenPane.heightProperty());
+        this.fullScreenImage.setPreserveRatio(true);
+    }
+    
+    private void setViewState(ViewState state) {
+        this.currentViewState = state;
+        switch(state) {
+            case IMAGE:
+                this.scrollImageContainer.setVisible(false);
+                this.fullScreenImageContainer.setVisible(true);
+                break;
+            default:
+                this.scrollImageContainer.setVisible(true);
+                this.fullScreenImageContainer.setVisible(false);
+                break;
+        }
     }
     
     public void disableInput(String message) {
@@ -143,8 +208,8 @@ public class GalleryDemoViewController implements Initializable {
         if (this.currentTask != null) {
             this.currentTask.cancel();
         }
-        imagePane.getChildren().clear();
-        this.currentTask = new ImageLoaderService(galleryNode, imagePane);
+        this.imagePane.getChildren().clear();
+        this.currentTask = new ImageLoaderService(this, galleryNode, imagePane);
         this.currentTask.start();
     }
     

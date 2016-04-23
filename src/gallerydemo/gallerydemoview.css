@@ -27,6 +27,10 @@
     -fx-hgap: 5px;
 }
 
+.root #fullScreenPane {
+    -fx-background-color: #818181;
+}
+
 BorderPane Text {
     -fx-font-size: 12px;
     -fx-fill: #ffffff;

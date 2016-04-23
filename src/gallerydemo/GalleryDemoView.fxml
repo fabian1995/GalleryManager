@@ -28,11 +28,22 @@
         </left>
 
         <center>
-            <ScrollPane fx:id="scrollImageContainer">
-                <content>
-                    <FlowPane fx:id="imagePane" prefHeight="200" prefWidth="300" rowValignment="CENTER" ></FlowPane>
-                </content>
-            </ScrollPane>
+            <StackPane>
+                <children>
+                    <ScrollPane fx:id="scrollImageContainer">
+                        <content>
+                            <FlowPane fx:id="imagePane" rowValignment="CENTER" ></FlowPane>
+                        </content>
+                    </ScrollPane>
+                    <BorderPane fx:id="fullScreenImageContainer">
+                        <center>
+                            <VBox alignment="CENTER" fx:id="fullScreenPane" id="fullScreenPane" minHeight="100" minWidth="100"  >
+                                <ImageView fx:id="fullScreenImage"></ImageView>
+                            </VBox>
+                        </center>
+                    </BorderPane>
+                </children>
+            </StackPane>
         </center>
     </BorderPane>
     

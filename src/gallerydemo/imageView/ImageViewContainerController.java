@@ -6,6 +6,7 @@
 package gallerydemo.imageView;
 
 import gallery.GalleryImage;
+import gallerydemo.GalleryDemoViewController;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +23,7 @@ import javafx.scene.text.Text;
  */
 public class ImageViewContainerController extends StackPane {
     
+    private final GalleryDemoViewController controller;
     private final GalleryImage model;
     
     @FXML
@@ -33,7 +35,7 @@ public class ImageViewContainerController extends StackPane {
     @FXML
     private Text resolutionText;
     
-    public ImageViewContainerController(GalleryImage model, Image thumbnail) {
+    public ImageViewContainerController(GalleryDemoViewController controller, GalleryImage model, Image thumbnail) {
         
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImageViewContainer.fxml"));
         fxmlLoader.setRoot((StackPane)this);
@@ -45,7 +47,12 @@ public class ImageViewContainerController extends StackPane {
             throw new RuntimeException(exception);
         }
         
+        this.controller = controller;
         this.model = model;
+        
+        this.setOnMouseClicked((MouseEvent) -> {
+            this.controller.enableFullImageView(this.model);
+        });
         
         this.stackBottomImageView.setImage(thumbnail);
         this.stackTopInfoPane.setVisible(false);
