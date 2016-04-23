@@ -47,10 +47,6 @@ public final class ManagementMenuController extends AbstractMenu {
 
         this.actualizeButtons();
 
-        // TODO Implement features for these buttons
-        //this.galleryPropertiesButton.setDisable(true);
-        //this.deleteGalleryButton.setDisable(true);
-
         this.newGalleryButton.setOnAction((ActionEvent event) -> {
             this.createGalleryOrFolder(true);
         });
@@ -111,6 +107,15 @@ public final class ManagementMenuController extends AbstractMenu {
 
     @Override
     public void actualizeButtons() {
+        if (this.controller.getActiveGallery() == null
+                || this.controller.getActiveGallery().isTrunk()) {
+            this.galleryPropertiesButton.setDisable(true);
+            this.deleteGalleryButton.setDisable(true);
+        }
+        else {
+            this.galleryPropertiesButton.setDisable(false);
+            this.deleteGalleryButton.setDisable(false);
+        }
     }
 
     private void createGalleryOrFolder(boolean isGallery) {

@@ -75,6 +75,7 @@ public class GalleryDemoViewController implements Initializable {
     public void setActiveGallery(GalleryNode g) {
         this.activeGallery = g;
         this.galleryMenuController.actualizeButtons();
+        this.managementMenuController.actualizeButtons();
     }
     
     public GalleryNode getActiveGallery() {
