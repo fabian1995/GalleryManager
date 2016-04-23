@@ -14,12 +14,12 @@ Already implemented:
 * Can run on any Desktop OS that supports Java 8 (Windows, Linux, Mac OS)
 * Images are stored in your computer's images directory - you can still manage them with your file browser if youn want to
 * The remote server can be any directory in your file system, you just have to mount a network drive
-* Create galleries and add pictures
+* Create galleries and add pictures, create collections
+* Rename or delete galleries or collections
 * Download galleries from the server and synchronize on demand
+* Export existing galleries to the server
 
 On my TODO-list:
-* Export existing galleries to the server
-* Further gallery and folder management options (delete, rename, ...)
 * Mulit-language support
 * Tag images with categories, add images to favourites or hide them
 * Create GUI for first the setup of GalleryManager
