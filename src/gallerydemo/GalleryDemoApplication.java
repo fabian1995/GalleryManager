@@ -9,8 +9,12 @@ import utils.StdoutConsoleHandler;
 import utils.LogFormatter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -25,6 +29,9 @@ import javafx.stage.Stage;
  */
 public class GalleryDemoApplication extends Application {
 
+    public static String VERSION = "dev";
+    public static String BUILD = "build";
+
     @Override
     public void start(Stage primaryStage) throws IOException {
 
@@ -34,26 +41,45 @@ public class GalleryDemoApplication extends Application {
 
         Scene scene = new Scene(root);
 
-        primaryStage.setTitle("GalleryDemo");
+        primaryStage.setTitle("GalleryManager [" + VERSION + " " + BUILD + "]");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     /**
      * @param args the command line arguments
+     * @throws java.io.FileNotFoundException
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+
+        Enumeration<URL> resources = GalleryDemoApplication.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
+        while (resources.hasMoreElements()) {
+            try {
+                Manifest manifest = new Manifest(resources.nextElement().openStream());
+                
+                Attributes attr = manifest.getMainAttributes();
+                
+                String mainClass = attr.getValue("Implementation-Use-Version-No");
+                
+                if (mainClass != null && mainClass.equals("Yes")) {
+                    GalleryDemoApplication:VERSION = attr.getValue("Implementation-Version");
+                    GalleryDemoApplication:BUILD = "Build " + attr.getValue("Implementation-Build-No");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         // Get logger
         Logger logger = Logger.getLogger("logfile");
         logger.setUseParentHandlers(false);
-        
+
         // Logging to console
         StdoutConsoleHandler sh = new StdoutConsoleHandler();
         sh.setFormatter(new LogFormatter(LogFormatter.MESSAGES_ONLY));
         logger.addHandler(sh);
 
-        // Logging to logfile (if not prevented with console parameter
+        // Logging to logfile (if not prevented with console parameter)
         if (args.length > 0 && args[0].equals("nologfile")) {
             FileHandler fh;
             SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd_HHmm");

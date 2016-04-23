@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
  
-<project name="JavaFX Hello World Example" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+<project name="GalleryManager" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
 
 	<property environment="env"/>
 	<property name="build.src.dir" value="src"/>
@@ -8,7 +8,7 @@
 	<property name="build.dist.dir" value="fxdist"/>
 	<property name="build.lib.dir" value="lib" />
  
-	<target name="check-version"> 
+	<target name="check-java"> 
 		<echo>Java/JVM version: ${ant.java.version}</echo> 
 		<echo>Java/JVM detail version: ${java.version}</echo>
 		<echo>Java location: ${env.JAVA_HOME}"</echo>
@@ -30,7 +30,9 @@
 			</fileset>
 			<manifest>
 				<attribute name="Implementation-Vendor" value="Fabian Hummer"/>
-				<attribute name="Implementation-Version" value="1.0"/>
+				<attribute name="Implementation-Version" value="alpha 1.0"/>
+				<attribute name="Implementation-Build-No" value="001"/>
+				<attribute name="Implementation-Use-Version-No" value="Yes"/>
 			</manifest>
 		</fx:jar>
 	</target>
