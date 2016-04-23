@@ -20,6 +20,11 @@
     -fx-padding: 10px 10px 10px 10px;
 }
 
+.root #fullScreenMenuBar {
+    -fx-background-color: #61a2b1;
+    -fx-padding: 10px 10px 10px 10px;
+}
+
 .root #imagePane {
     -fx-background-color: #818181;
     -fx-padding: 10px 5px 10px 5px;
@@ -31,13 +36,16 @@
     -fx-background-color: #818181;
 }
 
+Text {
+    -fx-fill: #ffffff;
+}
+
 BorderPane Text {
     -fx-font-size: 12px;
     -fx-fill: #ffffff;
 }
 
-Button.topMenuButton {
-    -fx-graphic: url('images/icon_question.png');
+Button.topMenuButton, Button.fullScreenButton {
     -fx-graphic-text-gap: 0px;
     -fx-text-alignment: center;
     -fx-text-fill: #ffffff;
@@ -45,12 +53,24 @@ Button.topMenuButton {
     -fx-background-color: transparent;
 }
 
-Button.topMenuButton:hover {
+Button.topMenuButton:hover, Button.fullScreenButton:hover {
     -fx-background-color: rgba(200, 200, 200, 0.7);
 }
 
-Button.topMenuButton:pressed {
+Button.topMenuButton:pressed, Button.fullScreenButton:pressed {
     -fx-background-color: rgba(180, 180, 180, 0.7);
+}
+
+#button-fs-back.fullScreenButton {
+    -fx-graphic: url('images/btn_sm_back.png');
+}
+
+#button-fs-prev.fullScreenButton {
+    -fx-graphic: url('images/btn_sm_prev.png');
+}
+
+#button-fs-next.fullScreenButton {
+    -fx-graphic: url('images/btn_sm_next.png');
 }
 
 #button-location.topMenuButton {
@@ -111,10 +131,6 @@ Button.topMenuDropDown:hover {
 
 Button.topMenuDropDown:pressed {
     -fx-background-color: rgba(180, 180, 180, 0.7);
-}
-
-Text {
-    -fx-fill: #ffffff;
 }
 
 VBox {

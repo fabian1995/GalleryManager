@@ -19,9 +19,11 @@ import java.nio.file.Files;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -71,6 +73,15 @@ public class GalleryDemoViewController implements Initializable {
     
     @FXML
     private Text fadeOutText;
+    
+    @FXML
+    private Button fullScreenCloseButton;
+    
+    @FXML
+    private Button fullScreenPrevButton;
+    
+    @FXML
+    private Button fullScreenNextButton;
 
     private File localGalleryLocation;
     private File remoteGalleryLocation;
@@ -173,6 +184,13 @@ public class GalleryDemoViewController implements Initializable {
         this.fullScreenImage.fitWidthProperty().bind(this.fullScreenPane.widthProperty());
         this.fullScreenImage.fitHeightProperty().bind(this.fullScreenPane.heightProperty());
         this.fullScreenImage.setPreserveRatio(true);
+        
+        this.fullScreenCloseButton.setOnAction((ActionEvent) -> {
+            this.disableFullImageView();
+        });
+        
+        this.fullScreenNextButton.setDisable(true);
+        this.fullScreenPrevButton.setDisable(true);
     }
     
     private void setViewState(ViewState state) {

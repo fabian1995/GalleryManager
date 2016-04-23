@@ -41,6 +41,13 @@
                                 <ImageView fx:id="fullScreenImage"></ImageView>
                             </VBox>
                         </center>
+                        <bottom>
+                            <HBox id="fullScreenMenuBar" alignment="CENTER_LEFT"> 
+                                <Button text="Schließen" fx:id="fullScreenCloseButton" id="button-fs-back" styleClass="fullScreenButton"/>
+                                <Button text="Zurück" fx:id="fullScreenPrevButton" id="button-fs-prev" styleClass="fullScreenButton"/>
+                                <Button text="Weiter" fx:id="fullScreenNextButton" id="button-fs-next" styleClass="fullScreenButton"/>
+                            </HBox>
+                        </bottom>
                     </BorderPane>
                 </children>
             </StackPane>
