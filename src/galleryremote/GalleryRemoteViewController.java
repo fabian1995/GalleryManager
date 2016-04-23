@@ -66,7 +66,7 @@ public class GalleryRemoteViewController implements Initializable {
                 if (!gallery.isImported() && gallery.isGallery()) {
                     File origin = gallery.getLocation();
                     File target = new File(baseTree.getConfigFile().getAbsolutePath() + "/" + origin.toString().replaceAll(remoteLocation.getAbsolutePath(), ""));
-                    Logger.getLogger("logfile").info("[import] " + gallery.getFileName() + ": " + origin + " -> " + target );
+                    Logger.getLogger("logfile").log(Level.INFO, "[import] {0}: {1} -> {2}", new Object[]{gallery.getFileName(), origin, target});
                     try {
                         FileUtils.copyDirectory(origin, target, new FileFilter() {
                             @Override
@@ -82,7 +82,7 @@ public class GalleryRemoteViewController implements Initializable {
                     importedGallery.setOrigin(gallery.getConfigFile());
                     importedGallery.saveConfigFile();
                 } else {
-                    Logger.getLogger("logfile").info("Did NOT import " + gallery.getFileName() );
+                    Logger.getLogger("logfile").log(Level.INFO, "Did NOT import {0}", gallery.getFileName());
                 }
             }
         });

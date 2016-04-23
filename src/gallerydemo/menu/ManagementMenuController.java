@@ -94,13 +94,16 @@ public final class ManagementMenuController extends AbstractMenu {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                System.out.println("DELETING " + g.getLocation());
+                GalleryNode parent = (GalleryNode)g.getParent();
+                Logger.getLogger("logfile").log(Level.INFO, "DELETING {0}", g.getLocation());
                 try {
                     FileUtils.deleteDirectory(g.getLocation());
                 } catch (IOException ex) {
                     Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
                 } finally {
-                    this.controller.reloadTreeItems();
+                    // Remove deleted gallery from tree view
+                    parent.getChildren().remove(g);
+                    this.controller.setActiveGallery(parent);
                 }
             }
         });
@@ -115,7 +118,13 @@ public final class ManagementMenuController extends AbstractMenu {
         File base;
         if (g == null) {
             base = this.controller.getLocalGalleryLocation();
-        } else {
+        }
+        // Create outside gallery folder
+        else if (g.isGallery()) {
+            base = g.getLocation().getParentFile();
+        }
+        // Create insode collection folder
+        else {
             base = g.getLocation();
         }
 
@@ -144,7 +153,7 @@ public final class ManagementMenuController extends AbstractMenu {
                 GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME), false, result.get(), false);
                 newGallery.saveConfigFile();
             }
-            this.controller.reloadTreeItems();
+            this.controller.refreshTreeItems();
             if (g != null)
                 g.setExpanded(true);
         }

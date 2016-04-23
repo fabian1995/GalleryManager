@@ -28,12 +28,10 @@ public class GalleryDemoViewListener implements ChangeListener<TreeItem<String>>
         
         this.controller.setActiveGallery(galleryNode);
 
-        if (galleryNode.isGallery()) {
-            //this.controller.buildGalleryMenu();
+        if (galleryNode != null && galleryNode.isGallery()) {
             this.controller.reloadGalleryImages(galleryNode);
         } else {
             this.controller.getImagePane().getChildren().clear();
-            //this.controller.buildCollectionMenu();
         }
     }
 

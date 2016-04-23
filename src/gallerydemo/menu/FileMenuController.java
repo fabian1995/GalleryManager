@@ -50,7 +50,7 @@ public final class FileMenuController extends AbstractMenu {
             stage.show();
             stage.setOnCloseRequest((WindowEvent we) -> {
                 controller.enableInput();
-                this.controller.reloadTreeItems();
+                this.controller.refreshTreeItems();
             });
             controller.disableInput("Gallerien werden hinzugefügt...");
         });

@@ -136,7 +136,7 @@ public class GalleryNode extends TreeItem {
     }
 
     public File getLocation() {
-        return this.config.getParentFile();
+        return this.config.isFile() ? this.config.getParentFile() : this.config;
     }
 
     public File getOrigin() {

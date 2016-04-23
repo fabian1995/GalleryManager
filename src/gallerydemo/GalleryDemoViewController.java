@@ -76,7 +76,7 @@ public class GalleryDemoViewController implements Initializable {
         this.activeGallery = g;
         this.galleryMenuController.actualizeButtons();
     }
-
+    
     public GalleryNode getActiveGallery() {
         return this.activeGallery;
     }
@@ -100,7 +100,7 @@ public class GalleryDemoViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.enableInput();
-        reloadTreeItems();
+        refreshTreeItems();
         this.activeGallery = null;
         
         this.scrollImageContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -132,8 +132,7 @@ public class GalleryDemoViewController implements Initializable {
         this.fadeOutPane.setVisible(false);
     }
 
-    // loads some strings into the tree in the application UI.
-    public void reloadTreeItems() {
+    public void refreshTreeItems() {
         this.galleryManager.search();
         locationTreeView.setRoot(this.galleryManager.getTrunk());
     }

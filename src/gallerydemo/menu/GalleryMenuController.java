@@ -65,6 +65,8 @@ public final class GalleryMenuController extends AbstractMenu {
                 Stage stage = new Stage();
                 stage.setTitle(g.getName() + " synchronisieren");
                 stage.setScene(new Scene(root1));
+                stage.setMinWidth(750);
+                stage.setMinHeight(450);
                 stage.show();
                 stage.setOnCloseRequest((WindowEvent we) -> {
                     controller.enableInput();

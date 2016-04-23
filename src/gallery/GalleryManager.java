@@ -29,10 +29,9 @@ public class GalleryManager {
     public GalleryNode getTrunk() {
         return this.trunk;
     }
-
+    
     public void search() {
         List<String> path = new ArrayList<>();
-        //path.add(root.getName());
         this.search(this.root, path, root.getAbsolutePath());
         this.trunk.sortChildren();
     }
