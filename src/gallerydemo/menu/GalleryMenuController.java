@@ -79,7 +79,15 @@ public final class GalleryMenuController extends AbstractMenu {
         this.exportGalleryButton.setOnAction((ActionEvent event)  -> {
             GalleryNode g = this.controller.getActiveGallery();
             File origin = g.getLocation();
-            File target = new File(controller.getRemoteGalleryLocation().getAbsolutePath() + "/" + origin.getAbsolutePath().replaceAll(controller.getLocalGalleryLocation().getAbsolutePath(), ""));
+            String absOriginPath = origin.getAbsolutePath().replace('\\', '/');
+            String absLocalPath = controller.getLocalGalleryLocation().getAbsolutePath().replace('\\', '/');
+            String absRemotePath = controller.getRemoteGalleryLocation().getAbsolutePath().replace('\\', '/');
+            
+            Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN " + absOriginPath);
+            Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  " + absLocalPath);
+            Logger.getLogger("logfile").log(Level.INFO, "[export] REMOTE " + absRemotePath);
+            
+            File target = new File(absRemotePath + "/" + absOriginPath.replaceFirst(absLocalPath, ""));
             Logger.getLogger("logfile").info("[export] " + g.getFileName() + ": " + origin + " -> " + target );
             try {
                 FileUtils.copyDirectory(origin, target, new FileFilter() {
