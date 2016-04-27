@@ -185,11 +185,13 @@ public final class GalleryNode extends TreeItem {
             return fileName.toLowerCase().matches(GalleryManager.IMAGE_FILE_REGEX);
         });
         
-        for (File f : fileList) {
-            try {
-                this.imageList.add(new GalleryImage(f));
-            } catch (IOException ex) {
-                Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+        if (fileList != null) {
+            for (File f : fileList) {
+                try {
+                    this.imageList.add(new GalleryImage(f));
+                } catch (IOException ex) {
+                    Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+                }
             }
         }
         
