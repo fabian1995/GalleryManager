@@ -7,6 +7,7 @@ import java.io.File;
 import gallery.GalleryNode;
 import gallerydemo.GalleryDemoViewController;
 import gallerydemo.imageView.ImageViewContainerController;
+import gallerydemo.task.TaskController;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -23,34 +24,42 @@ public class ImageLoader extends Task {
     private final GalleryDemoViewController controller;
     private final FlowPane imagePane;
     private final GalleryNode gallery;
+    private final TaskController task;
 
-    public ImageLoader (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane) {
+    public ImageLoader (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane, TaskController task) {
         this.controller = controller;
         this.imagePane = imagePane;
         this.gallery = gallery;
+        this.task = task;
     }
 
     @Override
     protected Object call() throws Exception {
         
-        /*Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    imagePane.getChildren().clear();
-                }
-        });*/
         gallery.createThumbnailFolder();
         List<GalleryImage> images = gallery.getImageList();
+        
+        Platform.runLater(() -> {
+           this.task.setProgress(0, images.size());
+        });
 
         for (int i = 0; i < images.size() && !isCancelled(); i++) {
             GalleryImage image = images.get(i);
             ImageView iv = this.loadOrCreateThumbnail(image.file);
             
+            final int progress = i;
+            
             Platform.runLater(() -> {
-                if (!isCancelled())
+                if (!isCancelled()) {
                     imagePane.getChildren().add(new ImageViewContainerController(controller, image, iv.getImage()));
+                    task.setProgress(progress, images.size());
+                }
             });
         }
+        
+        Platform.runLater(() -> {
+            this.task.delete();
+        });
         return null;
     }
 
@@ -65,8 +74,6 @@ public class ImageLoader extends Task {
         Image image = new Image("file:" + imagePath.getPath(), -1, 100, true, false, false);
 
         ImageView imageView = new ImageView(image);
-        //imageView.setFitHeight(100);
-        //imageView.setPreserveRatio(true);
 
         BufferedImage bImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
         try {

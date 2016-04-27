@@ -24,7 +24,18 @@
         </top>
 
         <left>
-            <TreeView fx:id="locationTreeView" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="250" />
+            <BorderPane>
+                <center>
+                    <ScrollPane fx:id="scrollTreeContainer">
+                        <TreeView fx:id="locationTreeView" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="250" />
+                    </ScrollPane>
+                </center>
+                <bottom>
+                    <VBox fx:id="taskList">
+                        <Text text="Aufgaben" styleClass="h1" /> 
+                    </VBox>
+                </bottom>
+            </BorderPane>
         </left>
 
         <center>

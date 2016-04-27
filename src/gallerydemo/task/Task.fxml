@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" styleClass="task" xmlns:fx="http://javafx.com/fxml/1">
+    <stylesheets>
+        <URL value="@task.css"/>
+    </stylesheets>
+    
+    <top>
+        <Text fx:id="title" text="Kopiere Galerie 'Winter'" styleClass="title"/>
+    </top>
+    <center>
+        <ProgressBar fx:id="progressBar" progress="0.0" prefWidth="250" minWidth="100" />  
+    </center>
+    <right>
+        <Text fx:id="progressText" text="0/0" styleClass="label"/>
+    </right>
+</fx:root>

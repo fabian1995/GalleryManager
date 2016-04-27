@@ -12,6 +12,7 @@ import gallery.load.ImageLoaderService;
 import gallerydemo.menu.FileMenuController;
 import gallerydemo.menu.ManagementMenuController;
 import gallerydemo.menu.GalleryMenuController;
+import gallerydemo.task.TaskController;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -19,7 +20,6 @@ import java.nio.file.Files;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -46,7 +46,9 @@ public class GalleryDemoViewController implements Initializable {
     
     public static final String GLOBAL_CONFIG_FILE_NAME = "config.json";
 
-    // the FXML annotation tells the loader to inject this variable before invoking initialize.
+    @FXML
+    private ScrollPane scrollTreeContainer;
+    
     @FXML
     private TreeView<String> locationTreeView;
 
@@ -82,6 +84,9 @@ public class GalleryDemoViewController implements Initializable {
     
     @FXML
     private Button fullScreenNextButton;
+    
+    @FXML
+    private VBox taskList;
 
     private File localGalleryLocation;
     private File remoteGalleryLocation;
@@ -160,6 +165,11 @@ public class GalleryDemoViewController implements Initializable {
         this.scrollImageContainer.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.scrollImageContainer.setFitToHeight(true);
         this.scrollImageContainer.setFitToWidth(true);
+        
+        this.scrollTreeContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        this.scrollTreeContainer.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        this.scrollTreeContainer.setFitToHeight(true);
+        this.scrollTreeContainer.setFitToWidth(true);
 
         this.locationTreeView.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends TreeItem<String>> observable, TreeItem<String> oldValue, TreeItem<String> newValue) -> {
@@ -191,6 +201,12 @@ public class GalleryDemoViewController implements Initializable {
         
         this.fullScreenNextButton.setDisable(true);
         this.fullScreenPrevButton.setDisable(true);
+    }
+    
+    public TaskController registerNewTask(String titleText, int max) {
+        TaskController task = new TaskController(this.taskList, titleText, max);
+        this.taskList.getChildren().add(task);
+        return task;
     }
     
     private void setViewState(ViewState state) {
