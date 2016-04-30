@@ -7,9 +7,11 @@ package galleryremote;
 
 import gallery.GalleryManager;
 import gallery.GalleryNode;
+import gallery.load.CopyGalleryService;
+import gallery.load.ServiceCallbackInterface;
+import gallery.load.ServiceControllerInterface;
+import gallerydemo.task.TaskController;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -20,14 +22,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeView;
-import org.apache.commons.io.FileUtils;
+import javafx.scene.layout.VBox;
 
 /**
  * FXML Controller class
  *
  * @author fabian
  */
-public class GalleryRemoteViewController implements Initializable {
+public class GalleryRemoteViewController implements Initializable, ServiceControllerInterface {
     
     private final File remoteLocation;
     private final GalleryNode baseTree;
@@ -37,6 +39,9 @@ public class GalleryRemoteViewController implements Initializable {
     
     @FXML
     private Button buttonImport;
+    
+    @FXML
+    private VBox taskList;
 
     public GalleryRemoteViewController(File remote, GalleryNode base) {
         this.remoteLocation = remote;
@@ -67,7 +72,7 @@ public class GalleryRemoteViewController implements Initializable {
                     File origin = gallery.getLocation();
                     File target = new File(baseTree.getConfigFile().getAbsolutePath() + "/" + origin.toString().replaceAll(remoteLocation.getAbsolutePath(), ""));
                     Logger.getLogger("logfile").log(Level.INFO, "[import] {0}: {1} -> {2}", new Object[]{gallery.getFileName(), origin, target});
-                    try {
+                    /*try {
                         FileUtils.copyDirectory(origin, target, new FileFilter() {
                             @Override
                             public boolean accept(File pathname) {
@@ -77,15 +82,28 @@ public class GalleryRemoteViewController implements Initializable {
                         });
                     } catch (IOException ex) {
                         Logger.getLogger(GalleryRemoteViewController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME));
-                    importedGallery.setOrigin(gallery.getConfigFile());
-                    importedGallery.saveConfigFile();
+                    }*/
+                    CopyGalleryService task = new CopyGalleryService(this, origin, target,
+                            "Importing gallery '" + gallery.getName() + "'",
+                            () -> {
+                                GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME));
+                                importedGallery.setOrigin(gallery.getConfigFile());
+                                importedGallery.saveConfigFile();
+                            }
+                    );
+                    task.start();
                 } else {
                     Logger.getLogger("logfile").log(Level.INFO, "Did NOT import {0}", gallery.getFileName());
                 }
             }
         });
-    }    
+    }
+
+    @Override
+    public TaskController registerNewTask(String titleText, int max) {
+        TaskController task = new TaskController(this.taskList, titleText, max);
+        this.taskList.getChildren().add(task);
+        return task;
+    }
     
 }

@@ -9,6 +9,7 @@ import gallery.GalleryImage;
 import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallery.load.ImageLoaderService;
+import gallery.load.ServiceControllerInterface;
 import gallerydemo.fullView.FullSizeViewController;
 import gallerydemo.menu.FileMenuController;
 import gallerydemo.menu.ManagementMenuController;
@@ -41,7 +42,7 @@ import org.json.JSONObject;
  *
  * @author fabian
  */
-public class GalleryDemoViewController implements Initializable {
+public class GalleryDemoViewController implements Initializable, ServiceControllerInterface {
     
     public static final String GLOBAL_CONFIG_FILE_NAME = "config.json";
 
@@ -165,6 +166,7 @@ public class GalleryDemoViewController implements Initializable {
         return this.galleryManager;
     }
     
+    @Override
     public TaskController registerNewTask(String titleText, int max) {
         TaskController task = new TaskController(this.taskList, titleText, max);
         this.taskList.getChildren().add(task);

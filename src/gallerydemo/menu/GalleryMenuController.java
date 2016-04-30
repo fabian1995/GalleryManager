@@ -6,11 +6,13 @@ package gallerydemo.menu;
 
 import gallery.GalleryNode;
 import gallery.load.AddImageService;
-import gallery.load.ExportService;
+import gallery.load.CopyGalleryService;
 import gallerycompare.GalleryCompareView;
 import gallerydemo.GalleryDemoViewController;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -71,9 +73,30 @@ public final class GalleryMenuController extends AbstractMenu {
         
         this.exportGalleryButton.setOnAction((ActionEvent event)  -> {
             GalleryNode g = this.controller.getActiveGallery();
-            ExportService task = new ExportService(this.controller, g);
+            
+            File origin = g.getLocation();
+            String absOriginPath = origin.getAbsolutePath().replace('\\', '/');
+            String absLocalPath = controller.getLocalGalleryLocation().getAbsolutePath().replace('\\', '/');
+            String absRemotePath = controller.getRemoteGalleryLocation().getAbsolutePath().replace('\\', '/');
+
+            Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN " + absOriginPath);
+            Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  " + absLocalPath);
+            Logger.getLogger("logfile").log(Level.INFO, "[export] REMOTE " + absRemotePath);
+
+            File target = new File(absRemotePath + "/" + absOriginPath.replaceFirst(absLocalPath, ""));
+            Logger.getLogger("logfile").info("[export] " + g.getFileName() + ": " + origin + " -> " + target );
+            
+            CopyGalleryService task = new CopyGalleryService(this.controller, origin, target,
+                    "Exporting gallery '" + g + "'",
+                    () -> {
+                        g.setOrigin(target);
+                        g.saveConfigFile();
+                        this.actualizeButtons();
+                    }
+            );
             task.start();
-            this.actualizeButtons();
+            
+            this.exportGalleryButton.setDisable(true);
         });
         
         this.addimgGalleryButton.setOnAction((ActionEvent event)  -> {
