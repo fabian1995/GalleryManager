@@ -45,35 +45,23 @@ public class GalleryDemoViewController implements Initializable {
     
     public static final String GLOBAL_CONFIG_FILE_NAME = "config.json";
 
-    @FXML
-    private ScrollPane scrollTreeContainer;
+    @FXML private ScrollPane scrollTreeContainer;
     
-    @FXML
-    private StackPane centerPanel;
+    @FXML private StackPane centerPanel;
     
-    @FXML
-    private TreeView<String> locationTreeView;
+    @FXML private TreeView<String> locationTreeView;
 
-    @FXML
-    private ScrollPane scrollImageContainer;
+    @FXML private ScrollPane scrollImageContainer;
     
-    //@FXML
-    //
-    
-    @FXML
-    private FlowPane imagePane;
+    @FXML private FlowPane imagePane;
 
-    @FXML
-    private HBox menuBar;
+    @FXML private HBox menuBar;
     
-    @FXML
-    private BorderPane fadeOutPane;
+    @FXML private BorderPane fadeOutPane;
     
-    @FXML
-    private Text fadeOutText;
+    @FXML private Text fadeOutText;
     
-    @FXML
-    private VBox taskList;
+    @FXML private VBox taskList;
 
     private File localGalleryLocation;
     private File remoteGalleryLocation;
@@ -101,50 +89,7 @@ public class GalleryDemoViewController implements Initializable {
         this.readConfigFile();
         this.galleryManager = new GalleryManager(this.localGalleryLocation);
     }
-
-    public void setActiveGallery(GalleryNode g) {
-        
-        this.setViewState(ViewState.BROWSE);
-        
-        this.activeGallery = g;
-        this.galleryMenuController.actualizeButtons();
-        this.managementMenuController.actualizeButtons();
-        
-        if (this.activeGallery != null && this.activeGallery.isGallery()) {
-            this.reloadGalleryImages(this.activeGallery, false);
-        } else {
-            this.imagePane.getChildren().clear();
-        }
-    }
     
-    public void enableFullSizeImageView(GalleryImage galleryImage) {
-        this.setViewState(ViewState.IMAGE);
-        //this.fullScreenImage.setImage(new Image("file:" + g.file));
-        //this.locationTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
-        this.fullSizeImageContainer.imageSelected(this.activeGallery.getImageList(false), galleryImage);
-    }
-    
-    public void disableFullSizeImageView() {
-        this.setViewState(ViewState.BROWSE);
-        this.locationTreeView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
-    }
-    
-    public GalleryNode getActiveGallery() {
-        return this.activeGallery;
-    }
-
-    public File getLocalGalleryLocation() {
-        return this.localGalleryLocation;
-    }
-    
-    public File getRemoteGalleryLocation() {
-        return this.remoteGalleryLocation;
-    }
-    
-    public GalleryManager getManager() {
-        return this.galleryManager;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.enableInput();
@@ -184,11 +129,57 @@ public class GalleryDemoViewController implements Initializable {
         
         this.setViewState(ViewState.BROWSE);
     }
+
+    public void setActiveGallery(GalleryNode g) {
+        
+        this.setViewState(ViewState.BROWSE);
+        
+        this.activeGallery = g;
+        this.galleryMenuController.actualizeButtons();
+        this.managementMenuController.actualizeButtons();
+        
+        if (this.activeGallery != null && this.activeGallery.isGallery()) {
+            this.reloadGalleryImages(this.activeGallery, false);
+        } else {
+            this.imagePane.getChildren().clear();
+        }
+    }
+    
+    public GalleryNode getActiveGallery() {
+        return this.activeGallery;
+    }
+
+    public File getLocalGalleryLocation() {
+        return this.localGalleryLocation;
+    }
+    
+    public File getRemoteGalleryLocation() {
+        return this.remoteGalleryLocation;
+    }
+    
+    public GalleryNode getRoot() {
+        return (GalleryNode)locationTreeView.getRoot();
+    }
+    
+    public GalleryManager getManager() {
+        return this.galleryManager;
+    }
     
     public TaskController registerNewTask(String titleText, int max) {
         TaskController task = new TaskController(this.taskList, titleText, max);
         this.taskList.getChildren().add(task);
         return task;
+    }
+    
+    public void enableFullSizeImageView(GalleryImage galleryImage) {
+        this.setViewState(ViewState.IMAGE);
+        this.locationTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
+        this.fullSizeImageContainer.imageSelected(this.activeGallery.getImageList(false), galleryImage);
+    }
+    
+    public void disableFullSizeImageView() {
+        this.setViewState(ViewState.BROWSE);
+        this.locationTreeView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
     }
     
     private void setViewState(ViewState state) {
@@ -227,10 +218,6 @@ public class GalleryDemoViewController implements Initializable {
         this.imagePane.getChildren().clear();
         this.currentTask = new ImageLoaderService(this, galleryNode, imagePane, reload);
         this.currentTask.start();
-    }
-    
-    public GalleryNode getRoot() {
-        return (GalleryNode)locationTreeView.getRoot();
     }
 
     private void readConfigFile() {

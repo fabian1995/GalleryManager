@@ -8,7 +8,6 @@ import gallery.GalleryImage;
 import gallerydemo.GalleryDemoViewController;
 import java.io.IOException;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
