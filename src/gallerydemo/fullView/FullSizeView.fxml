@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <VBox alignment="CENTER" fx:id="fullScreenPane" id="fullScreenPane" minHeight="100" minWidth="100"  >
+            <ImageView fx:id="fullScreenImage"></ImageView>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox id="fullScreenMenuBar" alignment="CENTER_LEFT"> 
+            <Button text="Schließen" fx:id="buttonClose" id="button-fs-back" styleClass="fullScreenButton"/>
+            <Button text="Zurück" fx:id="buttonPrev" id="button-fs-prev" styleClass="fullScreenButton"/>
+            <Button text="Weiter" fx:id="buttonNext" id="button-fs-next" styleClass="fullScreenButton"/>
+        </HBox>
+    </bottom>
+</fx:root>

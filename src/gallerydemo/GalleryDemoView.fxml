@@ -39,27 +39,13 @@
         </left>
 
         <center>
-            <StackPane>
+            <StackPane fx:id="centerPanel">
                 <children>
                     <ScrollPane fx:id="scrollImageContainer">
                         <content>
                             <FlowPane fx:id="imagePane" rowValignment="CENTER" ></FlowPane>
                         </content>
                     </ScrollPane>
-                    <BorderPane fx:id="fullScreenImageContainer">
-                        <center>
-                            <VBox alignment="CENTER" fx:id="fullScreenPane" id="fullScreenPane" minHeight="100" minWidth="100"  >
-                                <ImageView fx:id="fullScreenImage"></ImageView>
-                            </VBox>
-                        </center>
-                        <bottom>
-                            <HBox id="fullScreenMenuBar" alignment="CENTER_LEFT"> 
-                                <Button text="Schließen" fx:id="fullScreenCloseButton" id="button-fs-back" styleClass="fullScreenButton"/>
-                                <Button text="Zurück" fx:id="fullScreenPrevButton" id="button-fs-prev" styleClass="fullScreenButton"/>
-                                <Button text="Weiter" fx:id="fullScreenNextButton" id="button-fs-next" styleClass="fullScreenButton"/>
-                            </HBox>
-                        </bottom>
-                    </BorderPane>
                 </children>
             </StackPane>
         </center>

@@ -9,6 +9,7 @@ import gallery.GalleryImage;
 import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallery.load.ImageLoaderService;
+import gallerydemo.fullView.FullSizeViewController;
 import gallerydemo.menu.FileMenuController;
 import gallerydemo.menu.ManagementMenuController;
 import gallerydemo.menu.GalleryMenuController;
@@ -23,16 +24,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.json.JSONObject;
@@ -50,19 +49,16 @@ public class GalleryDemoViewController implements Initializable {
     private ScrollPane scrollTreeContainer;
     
     @FXML
+    private StackPane centerPanel;
+    
+    @FXML
     private TreeView<String> locationTreeView;
 
     @FXML
     private ScrollPane scrollImageContainer;
     
-    @FXML
-    private BorderPane fullScreenImageContainer;
-    
-    @FXML
-    private VBox fullScreenPane;
-    
-    @FXML
-    private ImageView fullScreenImage;
+    //@FXML
+    //
     
     @FXML
     private FlowPane imagePane;
@@ -75,15 +71,6 @@ public class GalleryDemoViewController implements Initializable {
     
     @FXML
     private Text fadeOutText;
-    
-    @FXML
-    private Button fullScreenCloseButton;
-    
-    @FXML
-    private Button fullScreenPrevButton;
-    
-    @FXML
-    private Button fullScreenNextButton;
     
     @FXML
     private VBox taskList;
@@ -101,6 +88,8 @@ public class GalleryDemoViewController implements Initializable {
     private EventHandler<MouseEvent> exitFullScreenHandler;
     
     private ImageLoaderService currentTask = null;
+    
+    private FullSizeViewController fullSizeImageContainer;
     
     enum ViewState {
         BROWSE, IMAGE
@@ -128,13 +117,14 @@ public class GalleryDemoViewController implements Initializable {
         }
     }
     
-    public void enableFullImageView(GalleryImage g) {
+    public void enableFullSizeImageView(GalleryImage galleryImage) {
         this.setViewState(ViewState.IMAGE);
-        this.fullScreenImage.setImage(new Image("file:" + g.file));
-        this.locationTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
+        //this.fullScreenImage.setImage(new Image("file:" + g.file));
+        //this.locationTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
+        this.fullSizeImageContainer.imageSelected(this.activeGallery.getImageList(false), galleryImage);
     }
     
-    public void disableFullImageView() {
+    public void disableFullSizeImageView() {
         this.setViewState(ViewState.BROWSE);
         this.locationTreeView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.exitFullScreenHandler);
     }
@@ -189,18 +179,10 @@ public class GalleryDemoViewController implements Initializable {
         this.galleryMenuController = new GalleryMenuController(this);
         this.menuBar.getChildren().add(this.galleryMenuController);
         
+        this.fullSizeImageContainer = new FullSizeViewController(this);
+        this.centerPanel.getChildren().add(this.fullSizeImageContainer);
+        
         this.setViewState(ViewState.BROWSE);
-        
-        this.fullScreenImage.fitWidthProperty().bind(this.fullScreenPane.widthProperty());
-        this.fullScreenImage.fitHeightProperty().bind(this.fullScreenPane.heightProperty());
-        this.fullScreenImage.setPreserveRatio(true);
-        
-        this.fullScreenCloseButton.setOnAction((ActionEvent) -> {
-            this.disableFullImageView();
-        });
-        
-        this.fullScreenNextButton.setDisable(true);
-        this.fullScreenPrevButton.setDisable(true);
     }
     
     public TaskController registerNewTask(String titleText, int max) {
@@ -214,11 +196,11 @@ public class GalleryDemoViewController implements Initializable {
         switch(state) {
             case IMAGE:
                 this.scrollImageContainer.setVisible(false);
-                this.fullScreenImageContainer.setVisible(true);
+                this.fullSizeImageContainer.setVisible(true);
                 break;
             default:
                 this.scrollImageContainer.setVisible(true);
-                this.fullScreenImageContainer.setVisible(false);
+                this.fullSizeImageContainer.setVisible(false);
                 break;
         }
     }

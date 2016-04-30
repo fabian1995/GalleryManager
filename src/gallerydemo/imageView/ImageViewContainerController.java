@@ -51,7 +51,7 @@ public class ImageViewContainerController extends StackPane {
         this.model = model;
         
         this.setOnMouseClicked((MouseEvent) -> {
-            this.controller.enableFullImageView(this.model);
+            this.controller.enableFullSizeImageView(this.model);
         });
         
         this.stackBottomImageView.setImage(thumbnail);

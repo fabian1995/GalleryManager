@@ -11,7 +11,6 @@ import gallerydemo.task.TaskController;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import java.util.List;
 import java.util.logging.Level;
