@@ -198,7 +198,13 @@ public final class GalleryNode extends TreeItem {
         Collections.sort(this.imageList);
     }
     
-    public List<GalleryImage> getImageList() {
+    public synchronized void addImage(File image) throws IOException {
+        this.imageList.add(new GalleryImage(image));
+    }
+    
+    public List<GalleryImage> getImageList(boolean reload) {
+        if (reload)
+            this.createImageList();
         return this.imageList;
     }
 

@@ -4,20 +4,13 @@
  */
 package gallerydemo.menu;
 
-import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallery.load.AddImageService;
 import gallery.load.ExportService;
-import gallery.load.ExportTask;
 import gallerycompare.GalleryCompareView;
 import gallerydemo.GalleryDemoViewController;
-import galleryremote.GalleryRemoteViewController;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -26,7 +19,6 @@ import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.apache.commons.io.FileUtils;
 
 /**
  * FXML Controller class
@@ -71,7 +63,7 @@ public final class GalleryMenuController extends AbstractMenu {
                 stage.show();
                 stage.setOnCloseRequest((WindowEvent we) -> {
                     controller.enableInput();
-                    controller.reloadGalleryImages(g);
+                    controller.reloadGalleryImages(g, true);
                 });
                 controller.disableInput(g.getName() + "wird synchronisiert...");
             }
@@ -89,7 +81,7 @@ public final class GalleryMenuController extends AbstractMenu {
             List<File> list = fileChooser.showOpenMultipleDialog(new Stage());
             
             if (list != null) {
-                AddImageService task = new AddImageService(controller, list, this.controller.getActiveGallery().getName());
+                AddImageService task = new AddImageService(controller, this.controller.getActiveGallery(), list);
                 task.start();
             }
             this.controller.enableInput();

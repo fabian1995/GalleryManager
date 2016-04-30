@@ -22,17 +22,19 @@ public class ImageLoaderService extends Service {
     private final FlowPane imagePane;
     private final GalleryNode gallery;
     private final TaskController task;
+    private final boolean reload;
     
-    public ImageLoaderService (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane) {
+    public ImageLoaderService (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane, boolean reload) {
         this.controller = controller;
         this.imagePane = imagePane;
         this.gallery = gallery;
         this.task = this.controller.registerNewTask("Loading Thumbnails for '" + gallery.getName() + "'", 1);
+        this.reload = reload;
     }
     
     @Override
     protected Task createTask() {
-        return new ImageLoader(controller, gallery, imagePane, task);
+        return new ImageLoader(controller, gallery, imagePane, task, reload);
     }
     
 }

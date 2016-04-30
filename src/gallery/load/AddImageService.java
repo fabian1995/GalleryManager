@@ -4,6 +4,7 @@
  */
 package gallery.load;
 
+import gallery.GalleryNode;
 import gallerydemo.GalleryDemoViewController;
 import gallerydemo.task.TaskController;
 import java.io.File;
@@ -18,18 +19,20 @@ import javafx.concurrent.Task;
 public class AddImageService extends Service {
 
     private final GalleryDemoViewController controller;
+    private final GalleryNode gallery;
     private final List<File> fileList;
     private final TaskController task;
     
-    public AddImageService (GalleryDemoViewController controller, List<File> fileList, String galleryName) {
+    public AddImageService (GalleryDemoViewController controller, GalleryNode gallery, List<File> fileList) {
         this.controller = controller;
+        this.gallery = gallery;
         this.fileList = fileList;
-        this.task = this.controller.registerNewTask("Copying images to '" + galleryName + "'", 1);
+        this.task = this.controller.registerNewTask("Copying images to '" + gallery.getName() + "'", 1);
     }
     
     @Override
     protected Task createTask() {
-        return new AddImageTask(this.controller, this.fileList, this.task);
+        return new AddImageTask(this.controller, this.gallery, this.fileList, this.task);
     }
     
 }

@@ -5,11 +5,13 @@
 package gallery.load;
 
 import gallery.GalleryManager;
+import gallery.GalleryNode;
 import gallerydemo.GalleryDemoViewController;
 import gallerydemo.task.TaskController;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,11 +26,13 @@ import javafx.concurrent.Task;
 public class AddImageTask extends Task {
 
     private final GalleryDemoViewController controller;
+    private final GalleryNode gallery;
     private final List<File> fileList;
     private final TaskController task;
 
-    public AddImageTask(GalleryDemoViewController controller, List<File> fileList, TaskController task) {
+    public AddImageTask(GalleryDemoViewController controller, GalleryNode gallery, List<File> fileList, TaskController task) {
         this.controller = controller;
+        this.gallery = gallery;
         this.fileList = fileList;
         this.task = task;
     }
@@ -43,7 +47,9 @@ public class AddImageTask extends Task {
         for (int i = 0; i < this.fileList.size(); i++) {
             if (this.fileList.get(i).getName().matches(GalleryManager.IMAGE_FILE_REGEX)) {
                 try {
-                    Files.copy(this.fileList.get(i).toPath(), new File(this.controller.getActiveGallery().getLocation() + "/" + this.fileList.get(i).getName()).toPath(), COPY_ATTRIBUTES);
+                    File destinationFile = new File(this.controller.getActiveGallery().getLocation() + "/" + this.fileList.get(i).getName());
+                    Files.copy(this.fileList.get(i).toPath(), destinationFile.toPath(), COPY_ATTRIBUTES);
+                    this.gallery.addImage(destinationFile);
                 } catch (IOException ex) {
                     Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
                 }
@@ -58,7 +64,7 @@ public class AddImageTask extends Task {
         
         Platform.runLater(() -> {
             this.task.delete();
-            this.controller.reloadGalleryImages(this.controller.getActiveGallery());
+            this.controller.reloadGalleryImages(this.controller.getActiveGallery(), false);
         });
         return null;
     }

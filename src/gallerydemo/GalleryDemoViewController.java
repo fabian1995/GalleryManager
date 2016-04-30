@@ -122,7 +122,7 @@ public class GalleryDemoViewController implements Initializable {
         this.managementMenuController.actualizeButtons();
         
         if (this.activeGallery != null && this.activeGallery.isGallery()) {
-            this.reloadGalleryImages(this.activeGallery);
+            this.reloadGalleryImages(this.activeGallery, false);
         } else {
             this.imagePane.getChildren().clear();
         }
@@ -237,13 +237,13 @@ public class GalleryDemoViewController implements Initializable {
         locationTreeView.setRoot(this.galleryManager.getTrunk());
     }
     
-    public void reloadGalleryImages(GalleryNode galleryNode) {
+    public void reloadGalleryImages(GalleryNode galleryNode, boolean reload) {
         
         if (this.currentTask != null) {
             this.currentTask.cancel();
         }
         this.imagePane.getChildren().clear();
-        this.currentTask = new ImageLoaderService(this, galleryNode, imagePane);
+        this.currentTask = new ImageLoaderService(this, galleryNode, imagePane, reload);
         this.currentTask.start();
     }
     

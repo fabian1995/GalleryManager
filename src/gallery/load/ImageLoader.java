@@ -25,19 +25,21 @@ public class ImageLoader extends Task {
     private final FlowPane imagePane;
     private final GalleryNode gallery;
     private final TaskController task;
+    private final boolean reload;
 
-    public ImageLoader (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane, TaskController task) {
+    public ImageLoader (GalleryDemoViewController controller, GalleryNode gallery, FlowPane imagePane, TaskController task, boolean reload) {
         this.controller = controller;
         this.imagePane = imagePane;
         this.gallery = gallery;
         this.task = task;
+        this.reload = reload;
     }
 
     @Override
     protected Object call() throws Exception {
         
         gallery.createThumbnailFolder();
-        List<GalleryImage> images = gallery.getImageList();
+        List<GalleryImage> images = gallery.getImageList(this.reload);
         
         Platform.runLater(() -> {
            this.task.setProgress(0, images.size());
