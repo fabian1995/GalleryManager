@@ -6,7 +6,13 @@
     -fx-padding: 5px 5px 5px 5px;
 }
 
+
 .task Text.title {
     -fx-font-size: 14px;
+    -fx-fill: #8a8a8a;
+}
+
+.task Text.label {
+    -fx-font-size: 12px;
     -fx-fill: #8a8a8a;
 }

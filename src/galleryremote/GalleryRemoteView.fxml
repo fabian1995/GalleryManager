@@ -18,11 +18,15 @@
     </center>
     
     <bottom>
-        <HBox alignment="CENTER_RIGHT">
-            <VBox fx:id="taskList">
-                <Text text="Aufgaben" styleClass="h1" /> 
-            </VBox>
-            <Button fx:id="buttonImport" text="Importieren" />
-        </HBox>
+        <BorderPane>
+            <center>
+                <VBox fx:id="taskList">
+                    <Text text="Aufgaben" styleClass="h1" /> 
+                </VBox>
+            </center>
+            <right>
+                <Button fx:id="buttonImport" text="Importieren" alignment="BOTTOM_RIGHT"  />
+            </right>
+        </BorderPane>
     </bottom>
 </fx:root>

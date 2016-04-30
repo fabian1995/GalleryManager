@@ -67,7 +67,7 @@ public final class GalleryMenuController extends AbstractMenu {
                     controller.enableInput();
                     controller.reloadGalleryImages(g, true);
                 });
-                controller.disableInput(g.getName() + "wird synchronisiert...");
+                controller.disableInput(g.getName() + " wird synchronisiert...");
             }
         });
         
