@@ -6,14 +6,15 @@ package gallerydemo.menu;
 
 import gallery.GalleryManager;
 import gallery.GalleryNode;
+import gallery.load.AddImageService;
+import gallery.load.ExportService;
+import gallery.load.ExportTask;
 import gallerycompare.GalleryCompareView;
 import gallerydemo.GalleryDemoViewController;
 import galleryremote.GalleryRemoteViewController;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.file.Files;
-import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,30 +79,8 @@ public final class GalleryMenuController extends AbstractMenu {
         
         this.exportGalleryButton.setOnAction((ActionEvent event)  -> {
             GalleryNode g = this.controller.getActiveGallery();
-            File origin = g.getLocation();
-            String absOriginPath = origin.getAbsolutePath().replace('\\', '/');
-            String absLocalPath = controller.getLocalGalleryLocation().getAbsolutePath().replace('\\', '/');
-            String absRemotePath = controller.getRemoteGalleryLocation().getAbsolutePath().replace('\\', '/');
-            
-            Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN " + absOriginPath);
-            Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  " + absLocalPath);
-            Logger.getLogger("logfile").log(Level.INFO, "[export] REMOTE " + absRemotePath);
-            
-            File target = new File(absRemotePath + "/" + absOriginPath.replaceFirst(absLocalPath, ""));
-            Logger.getLogger("logfile").info("[export] " + g.getFileName() + ": " + origin + " -> " + target );
-            try {
-                FileUtils.copyDirectory(origin, target, new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.getName().equals(GalleryManager.GALLERY_CONFIG_FILE_NAME)
-                                || pathname.getName().matches(GalleryManager.IMAGE_FILE_REGEX);
-                    }
-                });
-                g.setOrigin(target);
-                g.saveConfigFile();
-            } catch (IOException ex) {
-                Logger.getLogger(GalleryRemoteViewController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ExportService task = new ExportService(this.controller, g);
+            task.start();
             this.actualizeButtons();
         });
         
@@ -110,17 +89,9 @@ public final class GalleryMenuController extends AbstractMenu {
             List<File> list = fileChooser.showOpenMultipleDialog(new Stage());
             
             if (list != null) {
-                for (File f : list) {
-                    if (f.getName().matches(GalleryManager.IMAGE_FILE_REGEX)) {
-                        try {
-                            Files.copy(f.toPath(), new File(this.controller.getActiveGallery().getLocation() + "/" + f.getName()).toPath(), COPY_ATTRIBUTES);
-                        } catch (IOException ex) {
-                            Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }
+                AddImageService task = new AddImageService(controller, list, this.controller.getActiveGallery().getName());
+                task.start();
             }
-            this.controller.reloadGalleryImages(this.controller.getActiveGallery());
             this.controller.enableInput();
         });
     }

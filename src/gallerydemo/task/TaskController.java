@@ -38,9 +38,6 @@ public class TaskController extends BorderPane {
             throw new RuntimeException(exception);
         }
         
-        if (max <= 0)
-            max = 1;
-        
         this.container = container;
         
         this.title.setText(titleText);
@@ -48,9 +45,12 @@ public class TaskController extends BorderPane {
         this.setProgress(1, max);
     }
     
-    public void setProgress(int progress, int max) {
+    public final void setProgress(int progress, int max) {
         this.progressBar.setProgress((double)progress/max);
-        this.progressText.setText(progress + "/" + max);
+        if (max >= 0)
+            this.progressText.setText(progress + "/" + max);
+        else
+            this.progressText.setText("");
     }
     
     public void delete() {

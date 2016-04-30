@@ -48,7 +48,6 @@ public class ImageLoader extends Task {
             ImageView iv = this.loadOrCreateThumbnail(image.file);
             
             final int progress = i;
-            
             Platform.runLater(() -> {
                 if (!isCancelled()) {
                     imagePane.getChildren().add(new ImageViewContainerController(controller, image, iv.getImage()));
