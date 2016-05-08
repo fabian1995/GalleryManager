@@ -8,8 +8,8 @@ public class GalleryManager {
 
     private final File root;
 
-    public static final String GALLERY_CONFIG_FILE_NAME = "gallery.json";
-    public static final String COLLECTION_CONFIG_FILE_NAME = "collection.json";
+    public static final String GALLERY_CONFIG_FILE_NAME = ".gallery.json";
+    public static final String COLLECTION_CONFIG_FILE_NAME = ".collection.json";
     public static final String THUMBNAIL_FOLDER = ".thumbnails";
     public static final String IMAGE_FILE_REGEX = "[\\w-]+(.jpg|.JPG|.png|.PNG|.jpeg|.JPEG|.bmp|.BMP)$";
 
