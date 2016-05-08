@@ -128,6 +128,20 @@ public final class GalleryNode extends TreeItem {
     public boolean isImported() {
         return this.isImported;
     }
+    
+    public void setImportedTrue(boolean complete) {
+        
+        // Update status
+        this.isImported = true;
+        
+        // Update icon
+        ImageView icon = new ImageView();
+        if (complete)
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
+        else
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_pending.png")));
+        super.setGraphic(icon);
+    }
 
     public String getName() {
         return this.name;

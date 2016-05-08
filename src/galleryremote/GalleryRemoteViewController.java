@@ -67,28 +67,21 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
         
         this.buttonImport.setOnAction((ActionEvent event) -> {
             for (Object s : locationTreeView.getSelectionModel().getSelectedItems().toArray()) {
-                GalleryNode gallery = ((GalleryNode)s);
+                final GalleryNode gallery = ((GalleryNode)s);
                 if (!gallery.isImported() && gallery.isGallery()) {
                     File origin = gallery.getLocation();
                     File target = new File(baseTree.getConfigFile().getAbsolutePath() + "/" + origin.toString().replaceAll(remoteLocation.getAbsolutePath(), ""));
                     Logger.getLogger("logfile").log(Level.INFO, "[import] {0}: {1} -> {2}", new Object[]{gallery.getFileName(), origin, target});
-                    /*try {
-                        FileUtils.copyDirectory(origin, target, new FileFilter() {
-                            @Override
-                            public boolean accept(File pathname) {
-                                return pathname.getName().equals(GalleryManager.GALLERY_CONFIG_FILE_NAME)
-                                        || pathname.getName().matches(GalleryManager.IMAGE_FILE_REGEX);
-                            }
-                        });
-                    } catch (IOException ex) {
-                        Logger.getLogger(GalleryRemoteViewController.class.getName()).log(Level.SEVERE, null, ex);
-                    }*/
+                    gallery.setImportedTrue(false);
+                    
                     CopyGalleryService task = new CopyGalleryService(this, origin, target,
                             "Importing gallery '" + gallery.getName() + "'",
                             () -> {
-                                GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME));
+                                GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, gallery.getName(), false);
                                 importedGallery.setOrigin(gallery.getConfigFile());
+                                System.out.println("config of imported gallery: " + gallery.getConfigFile());
                                 importedGallery.saveConfigFile();
+                                gallery.setImportedTrue(true);
                             }
                     );
                     task.start();
