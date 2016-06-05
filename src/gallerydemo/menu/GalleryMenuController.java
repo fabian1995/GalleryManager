@@ -79,12 +79,12 @@ public final class GalleryMenuController extends AbstractMenu {
             String absLocalPath = controller.getLocalGalleryLocation().getAbsolutePath().replace('\\', '/');
             String absRemotePath = controller.getRemoteGalleryLocation().getAbsolutePath().replace('\\', '/');
 
-            Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN " + absOriginPath);
-            Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  " + absLocalPath);
-            Logger.getLogger("logfile").log(Level.INFO, "[export] REMOTE " + absRemotePath);
+            Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN {0}", absOriginPath);
+            Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  {0}", absLocalPath);
+            Logger.getLogger("logfile").log(Level.INFO, "[export] REMOTE {0}", absRemotePath);
 
             File target = new File(absRemotePath + "/" + absOriginPath.replaceFirst(absLocalPath, ""));
-            Logger.getLogger("logfile").info("[export] " + g.getFileName() + ": " + origin + " -> " + target );
+            Logger.getLogger("logfile").log(Level.INFO, "[export] {0}: {1} -> {2}", new Object[]{g.getFileName(), origin, target});
             
             CopyGalleryService task = new CopyGalleryService(this.controller, origin, target,
                     "Exporting gallery '" + g + "'",

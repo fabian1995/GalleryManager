@@ -28,23 +28,24 @@ public class LogFormatter extends Formatter {
     
     @Override
     public String format(LogRecord record) {
+        Object[] params = record.getParameters();
+        String message = record.getMessage();
+        
+        for (int i = 0; params != null && i < params.length; i++) {
+            Object o = params[i];
+            message = message.replace("{" + i + "}", o.toString());
+        }
+        
+        if (infoDensity == MESSAGES_ONLY)
+            return message + "\n";
+        
         SimpleDateFormat logTime = new SimpleDateFormat("HH:mm:ss");
         Calendar cal = new GregorianCalendar();
         cal.setTimeInMillis(record.getMillis());
         
-        if (infoDensity == 0)
-            return record.getMessage() + "\n";
-        
         return logTime.format(cal.getTime())
-                /*+ " || "
-                            + record.getSourceClassName().substring(
-                                    record.getSourceClassName().lastIndexOf(".")+1,
-                                    record.getSourceClassName().length())
-                            + "."
-                            + record.getSourceMethodName()
-                            + "() : "*/
                 + " [" + record.getLevel() + "] "
-                + record.getMessage() + "\n";
+                + message + "\n";
     }
 
 }

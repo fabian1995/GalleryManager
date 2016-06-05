@@ -30,8 +30,8 @@
 			</fileset>
 			<manifest>
 				<attribute name="Implementation-Vendor" value="Fabian Hummer"/>
-				<attribute name="Implementation-Version" value="alpha 1.0"/>
-				<attribute name="Implementation-Build-No" value="001"/>
+				<attribute name="Implementation-Version" value="Alpha 1.1"/>
+				<attribute name="Implementation-Build-No" value="003"/>
 				<attribute name="Implementation-Use-Version-No" value="Yes"/>
 			</manifest>
 		</fx:jar>

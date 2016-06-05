@@ -56,7 +56,7 @@ public class CopyGalleryTask extends Task {
             try {
                 Files.copy(fileList[i].toPath(), new File(target.toPath() + "/" + fileList[i].getName()).toPath(), COPY_ATTRIBUTES);
             } catch (IOException ex) {
-                Logger.getLogger("logfile").log(Level.SEVERE, ex.getMessage());
+                Logger.getLogger("logfile").log(Level.SEVERE, ex.getLocalizedMessage());
             }
             
             final int progress = i;
