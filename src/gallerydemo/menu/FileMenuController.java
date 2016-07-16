@@ -6,7 +6,6 @@ package gallerydemo.menu;
 
 import gallerydemo.GalleryDemoViewController;
 import galleryremote.GalleryRemoteView;
-import gallerysettings.GallerySettingsView;
 import java.awt.Desktop;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -39,13 +38,14 @@ public final class FileMenuController extends AbstractMenu {
             System.out.println("" + this.controller.settings.getLocalGalleryLocation() + " | " + Desktop.isDesktopSupported());
             // TODO: The fillowing lines do not work :( -> program freezes (only on my OS...?)
             /*try {
-                Desktop.getDesktop().open(new File("/home/fabian"));//this.controller.getLocalGalleryLocation());
+                Desktop.getDesktop().open(new File(""));//this.controller.getLocalGalleryLocation());
             } catch (IOException ex) {
                 Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
             }*/
         });
 
         this.importGalleryButton.setOnAction((ActionEvent) -> {
+            controller.disableInput("Gallerien werden hinzugefügt...");
             Parent root1 = new GalleryRemoteView(controller.settings.getRemoteGalleryLocation(), controller.getRoot());
             Stage stage = new Stage();
             stage.setTitle("Gallerien importieren...");
@@ -55,7 +55,6 @@ public final class FileMenuController extends AbstractMenu {
                 controller.enableInput();
                 this.controller.refreshTreeItems();
             });
-            controller.disableInput("Gallerien werden hinzugefügt...");
         });
         
         /*this.settingsButton.setOnAction((ActionEvent) -> {

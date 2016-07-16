@@ -70,7 +70,8 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
                 final GalleryNode gallery = ((GalleryNode)s);
                 if (!gallery.isImported() && gallery.isGallery()) {
                     File origin = gallery.getLocation();
-                    File target = new File(baseTree.getConfigFile().getAbsolutePath() + "/" + origin.toString().replaceAll(remoteLocation.getAbsolutePath(), ""));
+                    
+                    File target = new File(baseTree.getConfigFile().getAbsolutePath().replace('\\', '/') + "/" + origin.toString().replace('\\', '/').replaceAll(remoteLocation.getAbsolutePath().replace('\\', '/'), ""));
                     Logger.getLogger("logfile").log(Level.INFO, "[import] {0}: {1} -> {2}", new Object[]{gallery.getFileName(), origin, target});
                     gallery.setImportedTrue(false);
                     
