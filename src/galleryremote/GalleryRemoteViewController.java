@@ -79,14 +79,13 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
                             () -> {
                                 GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, gallery.getName(), false);
                                 importedGallery.setOrigin(gallery.getConfigFile());
-                                System.out.println("config of imported gallery: " + gallery.getConfigFile());
                                 importedGallery.saveConfigFile();
                                 gallery.setImportedTrue(true);
                             }
                     );
                     task.start();
                 } else {
-                    Logger.getLogger("logfile").log(Level.INFO, "Did NOT import {0}", gallery.getFileName());
+                    Logger.getLogger("logfile").log(Level.INFO, "[info] Did NOT import {0}", gallery.getFileName());
                 }
             }
         });

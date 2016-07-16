@@ -91,7 +91,7 @@ public final class ManagementMenuController extends AbstractMenu {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 GalleryNode parent = (GalleryNode)g.getParent();
-                Logger.getLogger("logfile").log(Level.INFO, "DELETING {0}", g.getLocation());
+                Logger.getLogger("logfile").log(Level.INFO, "[delete] {0}", g.getLocation());
                 try {
                     FileUtils.deleteDirectory(g.getLocation());
                 } catch (IOException ex) {

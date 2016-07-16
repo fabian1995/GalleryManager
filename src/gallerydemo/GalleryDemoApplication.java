@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
@@ -29,8 +30,8 @@ import javafx.stage.Stage;
  */
 public class GalleryDemoApplication extends Application {
 
-    public static String VERSION = "dev";
-    public static String BUILD = "build";
+    private static String VERSION = "dev";
+    private static String BUILD = "build";
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -80,20 +81,20 @@ public class GalleryDemoApplication extends Application {
         logger.addHandler(sh);
 
         // Logging to logfile (if not prevented with console parameter)
-        if (args.length > 0 && args[0].equals("nologfile")) {
+        if (!Arrays.asList(args).contains("--nologfile")) {
             FileHandler fh;
             SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd_HHmm");
             try {
-                // This block configure the logger with handler and formatter  
+                // This block configures the logger with handler and formatter  
                 fh = new FileHandler("logs/log_" + format.format(Calendar.getInstance().getTime()) + ".log");
-
-                //SimpleFormatter formatter = new SimpleFormatter();
                 fh.setFormatter(new LogFormatter(LogFormatter.MESSAGES_AND_TIME));
                 logger.addHandler(fh);
             } catch (SecurityException | IOException e) {
                 e.printStackTrace();
             }
         }
+        else
+            Logger.getLogger("logfile").info("[start] Parameter --nologfile found. Log is not saved.");
 
         launch(args);
     }
