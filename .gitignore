@@ -2,11 +2,12 @@ classes/*
 build/*
 dist/*
 fxdist/*
+logs/*
 lib/**/docs/*
 lib/**/*.zip
-**/.thumbnails/*
 galleries/*
 nbproject/*
 media/*
 build.xml
 config.json
+*.jar
