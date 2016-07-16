@@ -78,6 +78,10 @@ Button.topMenuButton:pressed, Button.fullScreenButton:pressed {
     -fx-graphic: url('images/icon_bilder.png');
 }
 
+#button-settings.topMenuButton {
+    -fx-graphic: url('images/icon_settings.png');
+}
+
 #button-fav.topMenuButton {
     -fx-graphic: url('images/icon_star.png');
 }

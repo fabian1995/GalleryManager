@@ -5,6 +5,9 @@
  */
 package gallerydemo;
 
+import gallerydemo.settings.GallerySettings;
+import gallerysettings.GallerySettingsView;
+import gallerysettings.GallerySettingsViewController;
 import utils.StdoutConsoleHandler;
 import utils.LogFormatter;
 import java.io.FileNotFoundException;
@@ -37,12 +40,26 @@ public class GalleryDemoApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
 
         Logger.getLogger("logfile").info("[init] GalleryDemoApplication");
+        
+        GallerySettings settings = new GallerySettings();
+        boolean success = settings.load();
 
-        Parent root = FXMLLoader.load(getClass().getResource("GalleryDemoView.fxml"));
+        FXMLLoader loader;
+        
+        if (success) {
+            loader = new FXMLLoader(getClass().getResource("GalleryDemoView.fxml"));
+            loader.setController(new GalleryDemoViewController(settings));
+        } else {
+            loader = new FXMLLoader(GallerySettingsView.class.getResource("GallerySettingsView.fxml"));
+            loader.setController(new GallerySettingsViewController(settings));
+        }
+        
+        Parent root = loader.load();
 
         Scene scene = new Scene(root);
 
         primaryStage.setTitle("GalleryManager [" + VERSION + " " + BUILD + "]");
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }

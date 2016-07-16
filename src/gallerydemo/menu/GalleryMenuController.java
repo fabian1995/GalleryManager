@@ -76,8 +76,8 @@ public final class GalleryMenuController extends AbstractMenu {
             
             File origin = g.getLocation();
             String absOriginPath = origin.getAbsolutePath().replace('\\', '/');
-            String absLocalPath = controller.getLocalGalleryLocation().getAbsolutePath().replace('\\', '/');
-            String absRemotePath = controller.getRemoteGalleryLocation().getAbsolutePath().replace('\\', '/');
+            String absLocalPath = controller.settings.getLocalGalleryLocation().getAbsolutePath().replace('\\', '/');
+            String absRemotePath = controller.settings.getRemoteGalleryLocation().getAbsolutePath().replace('\\', '/');
 
             Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN {0}", absOriginPath);
             Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  {0}", absLocalPath);

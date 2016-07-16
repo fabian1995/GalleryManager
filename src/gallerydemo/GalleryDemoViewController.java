@@ -14,13 +14,10 @@ import gallerydemo.fullView.FullSizeViewController;
 import gallerydemo.menu.FileMenuController;
 import gallerydemo.menu.ManagementMenuController;
 import gallerydemo.menu.GalleryMenuController;
+import gallerydemo.settings.GallerySettings;
 import gallerydemo.task.TaskController;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -35,7 +32,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import org.json.JSONObject;
 
 /**
  * FXML Controller class
@@ -43,8 +39,6 @@ import org.json.JSONObject;
  * @author fabian
  */
 public class GalleryDemoViewController implements Initializable, ServiceControllerInterface {
-    
-    public static final String GLOBAL_CONFIG_FILE_NAME = "config.json";
 
     @FXML private ScrollPane scrollTreeContainer;
     
@@ -63,12 +57,11 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     @FXML private Text fadeOutText;
     
     @FXML private VBox taskList;
-
-    private File localGalleryLocation;
-    private File remoteGalleryLocation;
     
     private GalleryNode activeGallery;
     private final GalleryManager galleryManager;
+    
+    public final GallerySettings settings;
     
     private FileMenuController fileMenuController;
     private ManagementMenuController managementMenuController;
@@ -86,9 +79,9 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     private ViewState currentViewState;
     
-    public GalleryDemoViewController() {
-        this.readConfigFile();
-        this.galleryManager = new GalleryManager(this.localGalleryLocation);
+    public GalleryDemoViewController(GallerySettings settings) {
+        this.settings = settings;
+        this.galleryManager = new GalleryManager(this.settings.getLocalGalleryLocation());
     }
     
     @Override
@@ -148,14 +141,6 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     public GalleryNode getActiveGallery() {
         return this.activeGallery;
-    }
-
-    public File getLocalGalleryLocation() {
-        return this.localGalleryLocation;
-    }
-    
-    public File getRemoteGalleryLocation() {
-        return this.remoteGalleryLocation;
     }
     
     public GalleryNode getRoot() {
@@ -222,30 +207,4 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         this.currentTask.start();
     }
 
-    private void readConfigFile() {
-
-        File configFile = new File(GLOBAL_CONFIG_FILE_NAME);
-        
-        if (!configFile.exists()) {
-            Logger.getLogger("logfile").warning("Config file not found");
-            this.localGalleryLocation = new File("galleries");
-            this.remoteGalleryLocation = new File("remote");
-            return;
-        }
-        
-        String rawJSON = null;
-        
-        try {
-            rawJSON = new String(Files.readAllBytes(configFile.toPath()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        JSONObject rootObject = new JSONObject(rawJSON);
-
-        this.localGalleryLocation = new File(rootObject.getString("localGalleryLocation"));
-        this.remoteGalleryLocation = new File(rootObject.getString("remoteGalleryLocation"));
-    }
-    
 }

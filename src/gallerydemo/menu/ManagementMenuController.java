@@ -122,7 +122,7 @@ public final class ManagementMenuController extends AbstractMenu {
         GalleryNode g = this.controller.getActiveGallery();
         File base;
         if (g == null) {
-            base = this.controller.getLocalGalleryLocation();
+            base = this.controller.settings.getLocalGalleryLocation();
         }
         // Create outside gallery folder
         else if (g.isGallery()) {

@@ -9,7 +9,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" fx:controller="gallerydemo.GalleryDemoViewController">
+<StackPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0">
     
     <stylesheets>
         <URL value="@gallerydemoview.css"/>

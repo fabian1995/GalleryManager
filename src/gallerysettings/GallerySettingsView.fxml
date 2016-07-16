@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1"
+        prefHeight="250" prefWidth="500"
+        alignment="TOP_CENTER" hgap="10" vgap="10" >
+    
+    <stylesheets>
+        <URL value="@gallerysettingsview.css"/>
+    </stylesheets>
+    
+    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+    
+    <Text text="Einstellungen zu lokalen Bildern"
+            GridPane.columnIndex="0" GridPane.rowIndex="0"
+            GridPane.columnSpan="3"/>
+         
+    <Label text="Bilderordner"
+            GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+             
+    <TextField fx:id="localDirField"
+            GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    
+    <Button text="Auswählen" fx:id="localDirButton"
+            GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+    
+    <CheckBox text="Galerien aus bestehenden Ordnern erstellen"
+            fx:id="createGalleriesCheckbox"
+            GridPane.columnIndex="0" GridPane.rowIndex="2"
+            GridPane.columnSpan="3"/>
+    
+    <Separator orientation="HORIZONTAL"
+            GridPane.columnIndex="0" GridPane.rowIndex="3"
+            GridPane.columnSpan="3"/>
+    
+    <Text text="Einstellungen zur Synchronisation"
+            GridPane.columnIndex="0" GridPane.rowIndex="4"
+            GridPane.columnSpan="3"/>
+    
+    <Label text="Server oder Ordner"
+            GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+             
+    <TextField fx:id="remoteDirField"
+            GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    
+    <Button text="Auswählen" fx:id="remoteDirButton"
+            GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+    
+    <Separator orientation="HORIZONTAL"
+            GridPane.columnIndex="0" GridPane.rowIndex="6"
+            GridPane.columnSpan="3"/>
+    
+    <!--<Button text="Abbrechen" fx:id="cancelButton"
+            GridPane.columnIndex="0" GridPane.rowIndex="7"/>-->
+    
+    <Button text="Speichern" fx:id="saveButton"
+            GridPane.columnIndex="2" GridPane.rowIndex="7"/>
+    
+</GridPane>

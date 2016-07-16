@@ -18,6 +18,7 @@
         <HBox alignment="BASELINE_CENTER">
             <Button text="Lokale Bilder" fx:id="locationButton" id="button-location" styleClass="topMenuButton"/>
             <Button text="Importieren" fx:id="importGalleryButton" id="button-import" styleClass="topMenuButton"/>
+            <!--<Button text="Einstellungen" fx:id="settingsButton" id="button-settings" styleClass="topMenuButton"/>-->
         </HBox>
     </center>
 </fx:root>
