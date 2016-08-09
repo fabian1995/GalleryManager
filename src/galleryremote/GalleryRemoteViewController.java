@@ -8,7 +8,6 @@ package galleryremote;
 import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallery.load.CopyGalleryService;
-import gallery.load.ServiceCallbackInterface;
 import gallery.load.ServiceControllerInterface;
 import gallerydemo.task.TaskController;
 import java.io.File;
@@ -31,8 +30,10 @@ import javafx.scene.layout.VBox;
  */
 public class GalleryRemoteViewController implements Initializable, ServiceControllerInterface {
     
-    private final File remoteLocation;
-    private final GalleryNode baseTree;
+    //private final File remoteLocation;
+    //private final GalleryNode baseTree;
+    
+    private final GalleryManager remoteManager;
     
     @FXML
     private TreeView<String> locationTreeView;
@@ -43,9 +44,10 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
     @FXML
     private VBox taskList;
 
-    public GalleryRemoteViewController(File remote, GalleryNode base) {
-        this.remoteLocation = remote;
-        this.baseTree = base;
+    public GalleryRemoteViewController(GalleryManager remoteManager) {
+        //this.remoteLocation = remote;
+        //this.baseTree = base;
+        this.remoteManager = remoteManager;
     }
     
     /**
@@ -58,10 +60,12 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
         
         Logger.getLogger("logfile").info("[init] GalleryRemoteView");
         
-        GalleryManager g = new GalleryManager(this.remoteLocation, this.baseTree);
-        g.search();
+        //GalleryManager g = new GalleryManager(this.remoteLocation, this.baseTree);
+        //g.search();
+        //g.readCacheFile();
+        //g.writeCacheFile();
 
-        locationTreeView.setRoot(g.getTrunk());
+        locationTreeView.setRoot(this.remoteManager.getTrunk());
         locationTreeView.setShowRoot(false);
         locationTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         
@@ -71,7 +75,13 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
                 if (!gallery.isImported() && gallery.isGallery()) {
                     File origin = gallery.getLocation();
                     
-                    File target = new File(baseTree.getConfigFile().getAbsolutePath().replace('\\', '/') + "/" + origin.toString().replace('\\', '/').replaceAll(remoteLocation.getAbsolutePath().replace('\\', '/'), ""));
+                    File target = new File(
+                            remoteManager.getCompareTrunk().getConfigFile().getAbsolutePath().replace('\\', '/') +
+                            "/" +
+                            origin.toString().replace('\\', '/').replaceAll(
+                                    remoteManager.getTrunk().getLocation().getAbsolutePath().replace('\\', '/'), ""
+                            )
+                    );
                     Logger.getLogger("logfile").log(Level.INFO, "[import] {0}: {1} -> {2}", new Object[]{gallery.getFileName(), origin, target});
                     gallery.setImportedTrue(false);
                     

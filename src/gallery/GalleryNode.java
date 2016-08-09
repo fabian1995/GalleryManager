@@ -153,7 +153,12 @@ public final class GalleryNode extends TreeItem {
     }
     
     public String getFileName() {
+        // TODO: Is config.isFile always true?
         return this.config.isFile() ? this.config.getParentFile().getName() : this.config.getName();
+    }
+    
+    public String getFolderName() {
+        return this.config.getParentFile().getName();
     }
 
     public File getLocation() {
@@ -277,5 +282,17 @@ public final class GalleryNode extends TreeItem {
         } catch (IOException ex) {
             Logger.getLogger(GalleryNode.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public JSONObject toCache() {
+        JSONObject object = new JSONObject();
+        
+        for (Object s : this.getChildren().toArray()) {
+            if (s instanceof GalleryNode) {
+                GalleryNode g = (GalleryNode)s;
+                object.put(g.getFolderName(), g.toCache());
+            }
+        }
+        return object;
     }
 }

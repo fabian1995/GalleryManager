@@ -46,7 +46,7 @@ public final class FileMenuController extends AbstractMenu {
 
         this.importGalleryButton.setOnAction((ActionEvent) -> {
             controller.disableInput("Gallerien werden hinzugefügt...");
-            Parent root1 = new GalleryRemoteView(controller.settings.getRemoteGalleryLocation(), controller.getRoot());
+            Parent root1 = new GalleryRemoteView(this.controller.getRemoteManager());
             Stage stage = new Stage();
             stage.setTitle("Gallerien importieren...");
             stage.setScene(new Scene(root1));
@@ -75,7 +75,7 @@ public final class FileMenuController extends AbstractMenu {
 
     @Override
     public void actualizeButtons() {
-        if (!this.controller.settings.getRemoteGalleryLocation().exists()) {
+        if (this.controller.getRemoteManager() == null) {
             this.importGalleryButton.setDisable(true);
         } else {
             this.importGalleryButton.setDisable(false);

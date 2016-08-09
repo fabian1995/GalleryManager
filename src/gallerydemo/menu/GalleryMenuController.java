@@ -82,8 +82,12 @@ public final class GalleryMenuController extends AbstractMenu {
             Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN {0}", absOriginPath);
             Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  {0}", absLocalPath);
             Logger.getLogger("logfile").log(Level.INFO, "[export] REMOTE {0}", absRemotePath);
+            
+            final String relPath = absOriginPath.replaceFirst(absLocalPath + "/", "");
 
-            File target = new File(absRemotePath + "/" + absOriginPath.replaceFirst(absLocalPath, ""));
+            File target = new File(absRemotePath + "/" + relPath);
+            
+            Logger.getLogger("logfile").log(Level.INFO, "[export] REL    {0}", relPath);
             Logger.getLogger("logfile").log(Level.INFO, "[export] {0}: {1} -> {2}", new Object[]{g.getFileName(), origin, target});
             
             CopyGalleryService task = new CopyGalleryService(this.controller, origin, target,
@@ -91,6 +95,8 @@ public final class GalleryMenuController extends AbstractMenu {
                     () -> {
                         g.setOrigin(target);
                         g.saveConfigFile();
+                        this.controller.getRemoteManager().addGallery(relPath);
+                        this.controller.getRemoteManager().writeCacheFile();
                         this.actualizeButtons();
                     }
             );

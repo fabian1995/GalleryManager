@@ -60,6 +60,7 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     private GalleryNode activeGallery;
     private final GalleryManager galleryManager;
+    private final GalleryManager remoteManager;
     
     public final GallerySettings settings;
     
@@ -82,6 +83,15 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     public GalleryDemoViewController(GallerySettings settings) {
         this.settings = settings;
         this.galleryManager = new GalleryManager(this.settings.getLocalGalleryLocation());
+        this.galleryManager.search();
+        if (this.settings.getRemoteGalleryLocation() != null
+                && this.settings.getRemoteGalleryLocation().exists()) {
+            this.remoteManager = new GalleryManager(this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk());
+            //this.remoteManager.search();
+            this.remoteManager.readCacheFile();
+        } else {
+            this.remoteManager = null;
+        }
     }
     
     @Override
@@ -143,12 +153,16 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         return this.activeGallery;
     }
     
-    public GalleryNode getRoot() {
+    /*public GalleryNode getRoot() {
         return (GalleryNode)locationTreeView.getRoot();
+    }*/
+    
+    public GalleryManager getLocalManager() {
+        return this.galleryManager;
     }
     
-    public GalleryManager getManager() {
-        return this.galleryManager;
+    public GalleryManager getRemoteManager() {
+        return this.remoteManager;
     }
     
     @Override
