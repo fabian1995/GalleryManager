@@ -9,6 +9,7 @@ import gallery.GalleryImage;
 import gallery.GalleryManager;
 import gallery.GalleryNode;
 import gallery.load.ImageLoaderService;
+import gallery.load.SearchGalleryService;
 import gallery.load.ServiceControllerInterface;
 import gallerydemo.fullView.FullSizeViewController;
 import gallerydemo.menu.FileMenuController;
@@ -60,7 +61,7 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     private GalleryNode activeGallery;
     private final GalleryManager galleryManager;
-    private final GalleryManager remoteManager;
+    private GalleryManager remoteManager = null;
     
     public final GallerySettings settings;
     
@@ -84,20 +85,12 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         this.settings = settings;
         this.galleryManager = new GalleryManager(this.settings.getLocalGalleryLocation());
         this.galleryManager.search();
-        if (this.settings.getRemoteGalleryLocation() != null
-                && this.settings.getRemoteGalleryLocation().exists()) {
-            this.remoteManager = new GalleryManager(this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk());
-            //this.remoteManager.search();
-            this.remoteManager.readCacheFile();
-        } else {
-            this.remoteManager = null;
-        }
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.enableInput();
-        refreshTreeItems();
+        this.locationTreeView.setRoot(this.galleryManager.getTrunk());
         this.activeGallery = null;
         
         this.scrollImageContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -132,6 +125,21 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         this.centerPanel.getChildren().add(this.fullSizeImageContainer);
         
         this.setViewState(ViewState.BROWSE);
+        
+        if (this.settings.getRemoteGalleryLocation() != null
+                && this.settings.getRemoteGalleryLocation().exists()) {
+            this.remoteManager = null;//new GalleryManager(this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk());
+            //this.remoteManager.search();
+            //this.remoteManager.readCacheFile();
+            SearchGalleryService task = new SearchGalleryService(this, this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk(), true, () -> {
+                this.fileMenuController.actualizeButtons();
+                
+            });
+            
+            task.start();
+        } else {
+            this.remoteManager = null;
+        }
     }
 
     public void setActiveGallery(GalleryNode g) {
@@ -163,6 +171,10 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     public GalleryManager getRemoteManager() {
         return this.remoteManager;
+    }
+    
+    public void setRemoteManager(GalleryManager r) {
+        this.remoteManager = r;
     }
     
     @Override

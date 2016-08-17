@@ -120,6 +120,7 @@ public class GallerySettingsViewController implements Initializable {
             GalleryNode newGallery = new GalleryNode(
                     new File(directory.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME),
                     false,
+                    false,
                     directory.getName(),
                     false
             );

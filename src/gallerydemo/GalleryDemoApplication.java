@@ -13,6 +13,7 @@ import utils.LogFormatter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,6 +21,7 @@ import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -112,7 +114,10 @@ public class GalleryDemoApplication extends Application {
         }
         else
             Logger.getLogger("logfile").info("[start] Parameter --nologfile found. Log is not saved.");
-
+        
+        Logger.getLogger("logfile").log(Level.INFO, "[start] Launching GalleryManager {0}, build {1}", new Object[]{VERSION, BUILD});
+        Logger.getLogger("logfile").log(Level.INFO, "[start] Default Charset Options are: {0}", Charset.defaultCharset());
+        
         launch(args);
     }
 

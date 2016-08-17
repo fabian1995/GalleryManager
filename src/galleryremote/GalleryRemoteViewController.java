@@ -88,7 +88,7 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
                     CopyGalleryService task = new CopyGalleryService(this, origin, target,
                             "Importing gallery '" + gallery.getName() + "'",
                             () -> {
-                                GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, gallery.getName(), false);
+                                GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, true, gallery.getName(), false);
                                 importedGallery.setOrigin(gallery.getConfigFile());
                                 importedGallery.saveConfigFile();
                                 gallery.setImportedTrue(true);

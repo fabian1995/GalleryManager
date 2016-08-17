@@ -23,6 +23,7 @@ public final class GalleryNode extends TreeItem {
 
     private String name;
     private boolean isImported;
+    private boolean createImageList;
     private File origin = null;
 
     private File config;
@@ -36,15 +37,16 @@ public final class GalleryNode extends TreeItem {
     private NodeType type;
     
     public GalleryNode(File config) {
-        this(config, false, null, false);
+        this(config, false, true, null, false);
     }
     
-    public GalleryNode(File config, boolean isImported) {
-        this(config, isImported, null, false);
+    public GalleryNode(File config, boolean isImported, boolean createImageList) {
+        this(config, isImported, createImageList, null, false);
     }
     
-    public GalleryNode(File config, boolean isImported, String name, boolean isTrunk) {
+    public GalleryNode(File config, boolean isImported, boolean createImageList, String name, boolean isTrunk) {
         this.isImported = isImported;
+        this.createImageList = createImageList;
         this.config = config;
         
         Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: {0}", config.getAbsolutePath());
@@ -57,6 +59,7 @@ public final class GalleryNode extends TreeItem {
                 this.type = NodeType.COLLECTION;
             else if (config.getName().equals(GalleryManager.GALLERY_CONFIG_FILE_NAME))
                 this.type = NodeType.GALLERY;
+            Logger.getLogger("logfile").log(Level.INFO, "reading config");
             this.readConfigFile();
         }
         else if(name == null && config.exists()) {
@@ -91,7 +94,10 @@ public final class GalleryNode extends TreeItem {
             icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
         super.setGraphic(icon);
         
-        this.createImageList();
+        if (this.type == NodeType.GALLERY && this.createImageList)
+            this.createImageList();
+        
+        Logger.getLogger("logfile").log(Level.INFO, "[log] My name is: {0}", this.getName());
     }
     
     public boolean contains(String nodeName) {
@@ -244,10 +250,12 @@ public final class GalleryNode extends TreeItem {
 
         String rawJSON = null;
 
+        Logger.getLogger("logfile").log(Level.SEVERE, "Starting to read");
+        
         try {
             rawJSON = new String(Files.readAllBytes(this.config.toPath()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception  e) {
+            Logger.getLogger("logfile").log(Level.SEVERE, "Error reading File {0}", e.getMessage());
             e.printStackTrace();
         }
 

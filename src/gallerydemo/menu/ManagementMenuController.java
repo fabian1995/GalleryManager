@@ -152,10 +152,10 @@ public final class ManagementMenuController extends AbstractMenu {
             newFolder.mkdir();
             System.out.println("mkdir " + newFolder.getPath());
             if (isGallery) {
-                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, result.get(), false);
+                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, true, result.get(), false);
                 newGallery.saveConfigFile();
             } else {
-                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME), false, result.get(), false);
+                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME), false, true, result.get(), false);
                 newGallery.saveConfigFile();
             }
             this.controller.refreshTreeItems();

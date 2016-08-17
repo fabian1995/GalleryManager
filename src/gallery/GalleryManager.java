@@ -33,7 +33,7 @@ public class GalleryManager {
     
     public GalleryManager(File root, GalleryNode compareTrunk) {
         this.root = root;
-        this.trunk = new GalleryNode(this.root, false, "Bilder auf diesem Computer", true);
+        this.trunk = new GalleryNode(this.root, false, false, "Bilder auf diesem Computer", true);
         this.compareTrunk = compareTrunk;
     }
 
@@ -62,7 +62,7 @@ public class GalleryManager {
             }
             else if (f.isFile() && f.getName().equals(GALLERY_CONFIG_FILE_NAME)
                     || f.isFile() && f.getName().equals(COLLECTION_CONFIG_FILE_NAME)) {
-                this.insertGallery(f.getName(), path);
+                this.insertGallery(f.getName(), path, true);
             }
         }
     }
@@ -70,13 +70,13 @@ public class GalleryManager {
     private void searchCache(JSONObject cache, List<String> path) {
         
         for (String k : cache.keySet()) {
+            System.out.println("...reading cache: " + k);
             path.add(k);
             searchCache(cache.getJSONObject(k), path);
             path.remove(k);
         }
         if (cache.keySet().isEmpty()) {
-            System.out.println("inserting: " + Arrays.toString(path.toArray()));
-            this.insertGallery(GALLERY_CONFIG_FILE_NAME, path);
+            this.insertGallery(GALLERY_CONFIG_FILE_NAME, path, false);
         }
     }
     
@@ -85,19 +85,17 @@ public class GalleryManager {
         path = path.replace('\\', '/');
         List<String> pathList = new LinkedList<>(Arrays.asList(path.split("/")));
         System.out.println("" + Arrays.toString(pathList.toArray()));
-        this.insertGallery(GALLERY_CONFIG_FILE_NAME, pathList);
+        this.insertGallery(GALLERY_CONFIG_FILE_NAME, pathList, true);
         
         if (this.compareTrunk != null) {
             this.writeCacheFile();
         }
     }
 
-    private void insertGallery(String configName, List<String> path) {
+    private void insertGallery(String configName, List<String> path, boolean createImageList) {
 
         GalleryNode position = this.trunk;
         GalleryNode comparison = this.compareTrunk;
-        
-        System.out.println("rootname: " + this.root.getAbsolutePath());
         
         String pathToGallery = "";
 
@@ -122,7 +120,7 @@ public class GalleryManager {
                         comparison = c;
                 }
                 
-                GalleryNode g = new GalleryNode(new File(this.root.getAbsolutePath() + "/" + pathToGallery), isImported);
+                GalleryNode g = new GalleryNode(new File(this.root.getAbsolutePath() + "/" + pathToGallery), isImported, createImageList);
                 position.getChildren().add(g);
                 position = g;
             }
@@ -133,15 +131,18 @@ public class GalleryManager {
         String rawJSON;
         JSONObject cache;
 
+        Logger.getLogger("logfile").log(Level.INFO, "[log] starting to read cache file");
+        
         try {
             rawJSON = new String(Files.readAllBytes(new File(this.root + "/" + CACHE_FILE_NAME).toPath()));
             JSONObject rootObject = new JSONObject(rawJSON);
             cache = rootObject.getJSONObject(JSON_CONF_CACHE);
-            System.out.println("start to search cache");
             this.searchCache(cache, new LinkedList<>());
+            System.out.println("Sorting...");
             this.trunk.sortChildren();
-        } catch (IOException | NullPointerException e) {
-            Logger.getLogger("logfile").log(Level.SEVERE, null, e);
+        } catch (IOException e) {
+            Logger.getLogger("logfile").log(Level.SEVERE, "Error reading cache: {0} - {1}", new Object[]{e.getMessage()});
+            Logger.getLogger("logfile").log(Level.INFO, "[log] reading cache failed!");
             this.search();
             this.writeCacheFile();
         }
