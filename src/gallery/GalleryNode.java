@@ -49,7 +49,7 @@ public final class GalleryNode extends TreeItem {
         this.createImageList = createImageList;
         this.config = config;
         
-        Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: {0}", config.getAbsolutePath());
+        Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: {0}, {1}", new Object[]{config.getAbsolutePath(), config.exists()});
 
         if (isTrunk)
             this.type = NodeType.TRUNK;
@@ -288,7 +288,7 @@ public final class GalleryNode extends TreeItem {
         try (FileWriter configFile = new FileWriter(this.config)) {
             configFile.write(configObject.toString());
         } catch (IOException ex) {
-            Logger.getLogger(GalleryNode.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("logfile").log(Level.SEVERE, ex.getMessage());
         }
     }
     
