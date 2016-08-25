@@ -20,7 +20,7 @@ public class GalleryManager {
     public static final String GALLERY_CONFIG_FILE_NAME = ".gallery.json";
     public static final String COLLECTION_CONFIG_FILE_NAME = ".collection.json";
     public static final String THUMBNAIL_FOLDER = ".thumbnails";
-    public static final String IMAGE_FILE_REGEX = "[\\w-]+(.jpg|.JPG|.png|.PNG|.jpeg|.JPEG|.bmp|.BMP)$";
+    public static final String IMAGE_FILE_REGEX = "^[^\\.][\\w\\s\\.#\\-]+\\.(jpg|JPG|png|PNG|jpeg|JPEG|bmp|BMP)$";
     
     private static final String JSON_CONF_CACHE = "cache";
 
@@ -80,22 +80,27 @@ public class GalleryManager {
         }
     }
     
-    // TODO use this function for creating galleries
-    public void addGallery(String path) {
+    // TODO use this function for creating and importing galleries
+    public void addGallery(String path, String name) {
         path = path.replace('\\', '/');
         List<String> pathList = new LinkedList<>(Arrays.asList(path.split("/")));
         System.out.println("" + Arrays.toString(pathList.toArray()));
-        this.insertGallery(GALLERY_CONFIG_FILE_NAME, pathList, true);
+        GalleryNode newNode = this.insertGallery(GALLERY_CONFIG_FILE_NAME, pathList, true);
+        
+        if (newNode != null)
+            newNode.setName(name);
         
         if (this.compareTrunk != null) {
             this.writeCacheFile();
         }
     }
 
-    private void insertGallery(String configName, List<String> path, boolean createImageList) {
+    private GalleryNode insertGallery(String configName, List<String> path, boolean createImageList) {
 
         GalleryNode position = this.trunk;
         GalleryNode comparison = this.compareTrunk;
+        
+        GalleryNode lastAdded = null;
         
         String pathToGallery = "";
 
@@ -120,11 +125,12 @@ public class GalleryManager {
                         comparison = c;
                 }
                 
-                GalleryNode g = new GalleryNode(new File(this.root.getAbsolutePath() + "/" + pathToGallery), isImported, createImageList);
-                position.getChildren().add(g);
-                position = g;
+                lastAdded = new GalleryNode(new File(this.root.getAbsolutePath() + "/" + pathToGallery), isImported, createImageList);
+                position.getChildren().add(lastAdded);
+                position = lastAdded;
             }
         }
+        return lastAdded;
     }
     
     public void readCacheFile() {

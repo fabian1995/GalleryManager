@@ -95,8 +95,7 @@ public final class GalleryMenuController extends AbstractMenu {
                     () -> {
                         g.setOrigin(target);
                         g.saveConfigFile();
-                        this.controller.getRemoteManager().addGallery(relPath);
-                        this.controller.getRemoteManager().writeCacheFile();
+                        this.controller.getRemoteManager().addGallery(relPath, g.getName());
                         this.actualizeButtons();
                     }
             );

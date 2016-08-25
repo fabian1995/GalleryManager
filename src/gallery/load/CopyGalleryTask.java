@@ -40,7 +40,7 @@ public class CopyGalleryTask extends Task {
         final File[] fileList = origin.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.toLowerCase().matches(GalleryManager.IMAGE_FILE_REGEX);
+                return name.matches(GalleryManager.IMAGE_FILE_REGEX);
             }
         });
 

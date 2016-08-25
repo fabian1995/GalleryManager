@@ -74,11 +74,15 @@ public final class GalleryNode extends TreeItem {
             }
             
         }
-        else {
+        else if(name != null){
             this.setName(name);
             this.origin = null;
             if (this.config != null && this.config.exists() && this.config.isFile())
                 this.saveConfigFile();
+        }
+        else {
+            this.setName(this.config.getParentFile().getName());
+            this.saveConfigFile();
         }
         
         ImageView icon = new ImageView();
@@ -199,7 +203,7 @@ public final class GalleryNode extends TreeItem {
     @Deprecated
     public File[] listImages() {
         return this.getLocation().listFiles((File dir, String fileName) -> {
-            return fileName.toLowerCase().matches(GalleryManager.IMAGE_FILE_REGEX);
+            return fileName.matches(GalleryManager.IMAGE_FILE_REGEX);
         });
     }
     
@@ -207,7 +211,7 @@ public final class GalleryNode extends TreeItem {
         this.imageList.clear();
         
         File[] fileList = this.getLocation().listFiles((File dir, String fileName) -> {
-            return fileName.toLowerCase().matches(GalleryManager.IMAGE_FILE_REGEX);
+            return fileName.matches(GalleryManager.IMAGE_FILE_REGEX);
         });
         
         if (fileList != null) {

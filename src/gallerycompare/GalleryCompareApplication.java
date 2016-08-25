@@ -38,7 +38,12 @@ public class GalleryCompareApplication extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        //launch(args);
+        
+        String regex = "^[^\\.][\\w\\s\\.#\\-]+\\.(jpg|JPG|png|PNG|jpeg|JPEG|bmp|BMP)$";
+        String fileName = "2012-07-07 15.32.30.jpg";
+        
+        System.out.println("" + fileName.matches(regex));
     }
 
 }
