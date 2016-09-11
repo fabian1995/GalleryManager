@@ -19,9 +19,19 @@ public class GalleryImage implements Comparable{
     public final File file;
     public final FileTime creationTime;
     public final FileTime lastModifiedTime;
+    public final GalleryImageType type;
+    
+    public static enum GalleryImageType {
+        IMAGE, VIDEO
+    };
     
     public GalleryImage(File file) throws IOException {
         this.file = file;
+        
+        if (this.file.getName().matches(GalleryManager.IMAGE_FILE_REGEX))
+            this.type = GalleryImageType.IMAGE;
+        else
+            this.type = GalleryImageType.VIDEO;
         
         BasicFileAttributes attr = Files.readAttributes(this.file.toPath(), BasicFileAttributes.class);
         this.creationTime = attr.creationTime();

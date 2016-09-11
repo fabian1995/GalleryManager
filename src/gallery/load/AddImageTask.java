@@ -44,7 +44,8 @@ public class AddImageTask extends Task {
         });
         
         for (int i = 0; i < this.fileList.size(); i++) {
-            if (this.fileList.get(i).getName().matches(GalleryManager.IMAGE_FILE_REGEX)) {
+            if (this.fileList.get(i).getName().matches(GalleryManager.IMAGE_FILE_REGEX)
+                    || this.fileList.get(i).getName().matches(GalleryManager.VIDEO_FILE_REGEX)) {
                 try {
                     File destinationFile = new File(this.controller.getActiveGallery().getLocation() + "/" + this.fileList.get(i).getName());
                     Files.copy(this.fileList.get(i).toPath(), destinationFile.toPath(), COPY_ATTRIBUTES);

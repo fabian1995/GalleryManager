@@ -18,6 +18,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.filechooser.FileSystemView;
 
 public class ImageLoader extends Task {
 
@@ -47,12 +49,14 @@ public class ImageLoader extends Task {
 
         for (int i = 0; i < images.size() && !isCancelled(); i++) {
             GalleryImage image = images.get(i);
-            ImageView iv = this.loadOrCreateThumbnail(image.file);
+            Image iv = this.loadOrCreateThumbnail(image.file);
+            
+            System.out.println("Loading image: " + image.file.getName());
             
             final int progress = i;
             Platform.runLater(() -> {
                 if (!isCancelled()) {
-                    imagePane.getChildren().add(new ImageViewContainerController(controller, image, iv.getImage()));
+                    imagePane.getChildren().add(new ImageViewContainerController(controller, image, iv));
                     task.setProgress(progress, images.size());
                 }
             });
@@ -64,12 +68,20 @@ public class ImageLoader extends Task {
         return null;
     }
 
-    public ImageView loadOrCreateThumbnail(File imagePath) {
+    public Image loadOrCreateThumbnail(File imagePath) {
+        
+        if (!imagePath.getName().matches(GalleryManager.IMAGE_FILE_REGEX)) {
+            ImageIcon icon = (ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(imagePath);
+            BufferedImage bufferedImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+            icon.paintIcon(null, bufferedImage.getGraphics(), 0, 0);
+            return SwingFXUtils.toFXImage(bufferedImage, null);
+        }
 
         File thumbnailPath = new File(imagePath.getParent() + "/" + GalleryManager.THUMBNAIL_FOLDER + "/" + imagePath.getName());
 
         if (thumbnailPath.exists() && thumbnailPath.isFile()) {
-            return new ImageView(new Image("file:" + thumbnailPath.getPath()));
+            return new Image("file:" + thumbnailPath.getPath());
         }
 
         Image image = new Image("file:" + imagePath.getPath(), -1, 100, true, false, false);
@@ -83,6 +95,6 @@ public class ImageLoader extends Task {
             throw new RuntimeException(e);
         }
 
-        return imageView;
+        return image;
     }
 }

@@ -6,8 +6,12 @@
 package gallerydemo.imageView;
 
 import gallery.GalleryImage;
+import gallery.GalleryImage.GalleryImageType;
 import gallerydemo.GalleryDemoViewController;
+import java.awt.Desktop;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
@@ -22,41 +26,51 @@ import javafx.scene.text.Text;
  * @author fabian
  */
 public class ImageViewContainerController extends StackPane {
-    
+
     private final GalleryDemoViewController controller;
     private final GalleryImage model;
-    
+
     @FXML
     private ImageView stackBottomImageView;
-    
+
     @FXML
     private BorderPane stackTopInfoPane;
-    
+
     @FXML
     private Text resolutionText;
-    
+
     public ImageViewContainerController(GalleryDemoViewController controller, GalleryImage model, Image thumbnail) {
-        
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImageViewContainer.fxml"));
-        fxmlLoader.setRoot((StackPane)this);
-        fxmlLoader.setController((StackPane)this);
-        
+        fxmlLoader.setRoot((StackPane) this);
+        fxmlLoader.setController((StackPane) this);
+
         try {
-            fxmlLoader.load();            
+            fxmlLoader.load();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-        
+
         this.controller = controller;
         this.model = model;
-        
+
         this.setOnMouseClicked((MouseEvent) -> {
-            this.controller.enableFullSizeImageView(this.model);
+            if (this.model.type == GalleryImageType.IMAGE) {
+                this.controller.enableFullSizeImageView(this.model);
+            } else if (Desktop.isDesktopSupported()) {
+                new Thread(() -> {
+                    try {
+                        Desktop.getDesktop().open(this.model.file);
+                    } catch (IOException ex) {
+                        Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+                    }
+                }).start();
+            }
         });
-        
+
         this.stackBottomImageView.setImage(thumbnail);
         this.stackTopInfoPane.setVisible(false);
-        
+
         //this.resolutionText.setText("" + originalWidth + " x " + originalHeight + " px");
     }
 }
