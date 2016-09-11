@@ -24,7 +24,7 @@
         </top>
         <center></center>
         <bottom>
-            <HBox alignment="CENTER" styleClass="imageRatingBar" maxHeight="30.0">
+            <HBox fx:id="imageRatingBar" alignment="CENTER" styleClass="imageRatingBar" maxHeight="30.0">
                 <Button id="button-fav" styleClass="imageRatingButton"/>
                 <Button id="button-inv" styleClass="imageRatingButton"/>
             </HBox>

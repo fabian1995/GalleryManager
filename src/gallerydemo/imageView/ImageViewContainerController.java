@@ -17,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -38,6 +39,9 @@ public class ImageViewContainerController extends StackPane {
 
     @FXML
     private Text resolutionText;
+    
+    @FXML
+    private HBox imageRatingBar;
 
     public ImageViewContainerController(GalleryDemoViewController controller, GalleryImage model, Image thumbnail) {
 
@@ -69,7 +73,14 @@ public class ImageViewContainerController extends StackPane {
         });
 
         this.stackBottomImageView.setImage(thumbnail);
-        this.stackTopInfoPane.setVisible(false);
+        this.imageRatingBar.setVisible(false);
+        
+        if (this.model.type == GalleryImageType.VIDEO) {
+            this.stackTopInfoPane.setVisible(true);
+            this.resolutionText.setText(this.model.file.getName());
+        }
+        else
+            this.stackTopInfoPane.setVisible(false);
 
         //this.resolutionText.setText("" + originalWidth + " x " + originalHeight + " px");
     }
