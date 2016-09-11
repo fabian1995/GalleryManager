@@ -7,6 +7,9 @@ package gallerydemo.menu;
 import gallerydemo.GalleryDemoViewController;
 import galleryremote.GalleryRemoteView;
 import java.awt.Desktop;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,13 +38,15 @@ public final class FileMenuController extends AbstractMenu {
         super(controller, "FileMenu.fxml");
 
         this.locationButton.setOnAction((ActionEvent) -> {
-            System.out.println("" + this.controller.settings.getLocalGalleryLocation() + " | " + Desktop.isDesktopSupported());
-            // TODO: The fillowing lines do not work :( -> program freezes (only on my OS...?)
-            /*try {
-                Desktop.getDesktop().open(new File(""));//this.controller.getLocalGalleryLocation());
-            } catch (IOException ex) {
-                Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
-            }*/
+            if (Desktop.isDesktopSupported()) {
+                new Thread(() -> {
+                    try {
+                        Desktop.getDesktop().open(this.controller.settings.getLocalGalleryLocation());
+                    } catch (IOException ex) {
+                        Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+                    }
+                }).start();
+            }
         });
 
         this.importGalleryButton.setOnAction((ActionEvent) -> {
