@@ -59,6 +59,8 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     @FXML private VBox taskList;
     
+    @FXML private VBox messageList;
+    
     private GalleryNode activeGallery;
     private final GalleryManager galleryManager;
     private GalleryManager remoteManager = null;
@@ -74,6 +76,8 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     private ImageLoaderService currentTask = null;
     
     private FullSizeViewController fullSizeImageContainer;
+    
+    private boolean searching = false;
     
     enum ViewState {
         BROWSE, IMAGE
@@ -128,18 +132,27 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         
         if (this.settings.getRemoteGalleryLocation() != null
                 && this.settings.getRemoteGalleryLocation().exists()) {
-            this.remoteManager = null;//new GalleryManager(this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk());
-            //this.remoteManager.search();
-            //this.remoteManager.readCacheFile();
+            this.remoteManager = null;
+            
+            // Disable "Export gallery" buttons
+            this.searching = true;
+            this.galleryMenuController.actualizeButtons();
+            
+            // Search server galleries
             SearchGalleryService task = new SearchGalleryService(this, this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk(), true, () -> {
+                this.searching = false;
                 this.fileMenuController.actualizeButtons();
-                
+                this.galleryMenuController.actualizeButtons();
             });
             
             task.start();
         } else {
             this.remoteManager = null;
         }
+    }
+    
+    public boolean isSearching() {
+        return this.searching;
     }
 
     public void setActiveGallery(GalleryNode g) {

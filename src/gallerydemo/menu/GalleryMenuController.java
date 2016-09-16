@@ -139,7 +139,8 @@ public final class GalleryMenuController extends AbstractMenu {
         }
         
         // Disable "Export" button if not connected to server
-        if (this.controller.getRemoteManager() == null) {
+        if (this.controller.getRemoteManager() == null
+                || this.controller.isSearching()) {
             this.exportGalleryButton.setDisable(true);
         }
         
