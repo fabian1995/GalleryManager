@@ -120,8 +120,10 @@ public class GalleryManager {
                 
                 if (comparison != null) {
                     GalleryNode c = comparison.getChildNode(name);
-                    if (c != null && c.isGallery())
+                    if (c != null && c.isGallery()) {
                         isImported = true;
+                        c.setOriginConfirmed();
+                    }
                     if (c != null)
                         comparison = c;
                 }

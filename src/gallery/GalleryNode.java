@@ -25,6 +25,7 @@ public final class GalleryNode extends TreeItem {
     private boolean isImported;
     private boolean createImageList;
     private File origin = null;
+    private boolean originConfirmed = false;
 
     private File config;
     
@@ -92,8 +93,8 @@ public final class GalleryNode extends TreeItem {
             icon.setImage(new Image(getClass().getResourceAsStream("icon_folder.png")));
         else if (this.isImported)
             icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
-        else if (this.hasOrigin())
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_cloud.png")));
+        else if (this.hasOrigin() && !this.originConfirmed)
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_nocloud.png")));
         else
             icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
         super.setGraphic(icon);
@@ -140,7 +141,6 @@ public final class GalleryNode extends TreeItem {
     }
     
     public void setImportedTrue(boolean complete) {
-        
         // Update status
         this.isImported = true;
         
@@ -151,6 +151,17 @@ public final class GalleryNode extends TreeItem {
         else
             icon.setImage(new Image(getClass().getResourceAsStream("icon_pending.png")));
         super.setGraphic(icon);
+    }
+    
+    public void setOriginConfirmed() {
+        ImageView icon = new ImageView();
+        icon.setImage(new Image(getClass().getResourceAsStream("icon_cloud.png")));
+        super.setGraphic(icon);
+        this.originConfirmed = true;
+    }
+    
+    public boolean isOriginConfirmed() {
+        return this.originConfirmed;
     }
 
     public String getName() {
