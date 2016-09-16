@@ -47,7 +47,7 @@ public final class GalleryMenuController extends AbstractMenu {
         
         // Add extension filter to file chooser
         this.fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("All Images", "*.*"),
+            new FileChooser.ExtensionFilter("All Files", "*.*"),
             new FileChooser.ExtensionFilter("JPG", "*.jpg"),
             new FileChooser.ExtensionFilter("PNG", "*.png")
         );
@@ -118,6 +118,7 @@ public final class GalleryMenuController extends AbstractMenu {
     
     @Override
     public void actualizeButtons() {
+        // "Export Gallery" or "Sync" Button
         if (this.controller.getActiveGallery() != null
                 && this.controller.getActiveGallery().isGallery()) {
             
@@ -137,6 +138,12 @@ public final class GalleryMenuController extends AbstractMenu {
             this.exportGalleryButton.setDisable(true);
         }
         
+        // Disable "Export" button if not connected to server
+        if (this.controller.getRemoteManager() == null) {
+            this.exportGalleryButton.setDisable(true);
+        }
+        
+        // "Add Images" Button
         if (this.controller.getActiveGallery() != null
                 && this.controller.getActiveGallery().isGallery()) {
             this.addimgGalleryButton.setDisable(false);
