@@ -55,7 +55,7 @@ public final class GalleryMenuController extends AbstractMenu {
         this.syncGalleryButton.setOnAction((ActionEvent event) -> {
             GalleryNode g = controller.getActiveGallery();
 
-            if (g.getOrigin() != null && g.getOrigin().exists()) {
+            if (g.getOriginNode() != null) {
                 Parent root1 = new GalleryCompareView(g, g.getOriginNode());
                 Stage stage = new Stage();
                 stage.setTitle(g.getName() + " synchronisieren");
@@ -95,10 +95,11 @@ public final class GalleryMenuController extends AbstractMenu {
             CopyGalleryService task = new CopyGalleryService(this.controller, origin, target,
                     "Exporting gallery '" + g + "'",
                     () -> {
-                        g.setOrigin(target);
-                        g.saveConfigFile();
+                        //g.setOrigin(target);
+                        //g.saveConfigFile();
                         GalleryNode newNode = this.controller.getRemoteManager().addGallery(relPath, g.getName());
                         newNode.setLastChanged(g.getLastChanged());
+                        g.setOriginNode(newNode);
                         this.actualizeButtons();
                     }
             );
@@ -127,7 +128,7 @@ public final class GalleryMenuController extends AbstractMenu {
         if (this.controller.getActiveGallery() != null
                 && this.controller.getActiveGallery().isGallery()) {
             
-            if (this.controller.getActiveGallery().getOrigin().exists()
+            if (this.controller.getActiveGallery().getOriginNode() != null
                     && this.controller.getActiveGallery().isOriginConfirmed()) {
                 this.syncGalleryButton.setVisible(true);
                 this.exportGalleryButton.setVisible(false);

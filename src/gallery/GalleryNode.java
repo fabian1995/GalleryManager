@@ -30,7 +30,6 @@ public final class GalleryNode extends TreeItem {
     
     private boolean isImported;
     private boolean createImageList;
-    private File origin = null;
     private boolean originConfirmed = false;
     private GalleryNode originNode = null;
 
@@ -84,7 +83,6 @@ public final class GalleryNode extends TreeItem {
         }
         else if(name != null){
             this.setName(name);
-            this.origin = null;
             if (this.config != null && this.config.exists() && this.config.isFile())
                 this.saveConfigFile();
         }
@@ -109,17 +107,18 @@ public final class GalleryNode extends TreeItem {
             icon.setImage(new Image(getClass().getResourceAsStream("icon_folder.png")));
         else if (this.isImported)
             icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
-        else if (this.hasOrigin() && !this.originConfirmed)
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_nocloud.png")));
-        else if (this.originNode != null && this.originNode.getLastChanged().getTime() > this.lastChanged.getTime())
+        //else if (this.originNode != null && !this.originConfirmed)
+            //icon.setImage(new Image(getClass().getResourceAsStream("icon_nocloud.png")));
+        else if (this.originNode != null && this.originNode.getLastChanged().getTime() > this.getLastChanged().getTime())
             icon.setImage(new Image(getClass().getResourceAsStream("icon_servernewer.png")));
-        else if (this.originNode != null && this.originNode.getLastChanged().getTime() < this.lastChanged.getTime())
+        else if (this.originNode != null && this.originNode.getLastChanged().getTime() < this.getLastChanged().getTime())
             icon.setImage(new Image(getClass().getResourceAsStream("icon_localnewer.png")));
-        else if (this.hasOrigin())
+        else if (this.originNode != null)
             icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
         else
             icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
-        super.setGraphic(icon);
+        //TODO only when necessary
+        Platform.runLater(() -> {super.setGraphic(icon);});
     }
     
     public boolean contains(String nodeName) {
@@ -154,6 +153,9 @@ public final class GalleryNode extends TreeItem {
     }
     
     public Date getLastChanged() {
+        //TODO always initialize
+        if (this.lastChanged == null)
+            this.lastChanged = new Date(0);
         return this.lastChanged;
     }
     
@@ -228,22 +230,22 @@ public final class GalleryNode extends TreeItem {
         return this.config.isFile() ? this.config.getParentFile() : this.config;
     }
 
-    public File getOrigin() {
+    /*public File getOrigin() {
         return this.origin;
-    }
+    }*/
     
-    public boolean hasOrigin() {
+    /*public boolean hasOrigin() {
         return this.origin != null && !this.origin.getPath().equals("");
-    }
+    }*/
     
-    public void setOrigin(File origin) {
+    /*public void setOrigin(File origin) {
         this.origin = origin;
         if (this.origin.exists()) {
             ImageView icon = new ImageView();
             icon.setImage(new Image(getClass().getResourceAsStream("icon_cloud.png")));
             super.setGraphic(icon);
         }
-    }
+    }*/
 
     public boolean isGallery() {
         return this.type == NodeType.GALLERY;
@@ -322,7 +324,6 @@ public final class GalleryNode extends TreeItem {
 
         this.setName(rootObject.getString(GALLERY_JSON_CONF_NAME));
         if (this.type == NodeType.GALLERY) {
-            this.origin = new File(rootObject.getString(GALLERY_JSON_CONF_ORIGIN));
             try {
                 this.lastChanged = new Date(rootObject.getLong(GALLERY_JSON_CONF_LASTCHANGED));
             } catch (JSONException e) {
@@ -345,10 +346,6 @@ public final class GalleryNode extends TreeItem {
         }
         
         if (this.type == NodeType.GALLERY) {
-            if (this.origin == null)
-                configObject.put(GALLERY_JSON_CONF_ORIGIN, "");
-            else
-                configObject.put(GALLERY_JSON_CONF_ORIGIN, this.origin.getAbsolutePath());
             configObject.put(GALLERY_JSON_CONF_LASTCHANGED, 
                     this.lastChanged == null ? 0 : this.lastChanged.getTime());
         }
