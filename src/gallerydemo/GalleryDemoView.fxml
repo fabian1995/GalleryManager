@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0">
     
@@ -31,20 +32,33 @@
         
         <right>
             <BorderPane>
+                <BorderPane.margin>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </BorderPane.margin>
                 <top>
                     <VBox minHeight="80.0">
                         <Text text="Informationen" styleClass="h1"/>
                         <Text text="Zuletzt geändert:" styleClass="label"/>
-                        <TextField fx:id="infoLastChanged" editable="false"/>  
+                        <HBox styleClass="infobox">
+                            <ImageView/>
+                            <Text fx:id="infoLastChanged" styleClass="infolabel"/>
+                        </HBox>
+                        <Text text="Status:" styleClass="label"/>
+                        <HBox styleClass="infobox">
+                            <ImageView fx:id="infoStatusIcon"/>
+                            <Text fx:id="infoStatusText" styleClass="infolabel"/>
+                        </HBox>
                     </VBox>
                 </top>
                 <center>
                     <VBox fx:id="messageList">
+                        <Separator orientation="HORIZONTAL"/>
                         <Text text="Benachrichtigungen" styleClass="h1" />
                     </VBox>
                 </center>
                 <bottom>
                     <VBox fx:id="taskList" minHeight="200.0">
+                        <Separator orientation="HORIZONTAL"/> 
                         <Text text="Aufgaben" styleClass="h1" /> 
                     </VBox>
                 </bottom>

@@ -51,6 +51,16 @@ Text.label {
     -fx-fill: #8a8a8a;
 }
 
+Text.infolabel {
+    -fx-font-weight: bold;
+    
+}
+
+HBox.infobox {
+    -fx-background-color: #D3D7CF;
+    -fx-padding: 5px 5px 5px 5px;
+}
+
 Button.topMenuButton, Button.fullScreenButton {
     -fx-graphic-text-gap: 0px;
     -fx-text-alignment: center;

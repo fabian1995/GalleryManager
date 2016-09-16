@@ -28,6 +28,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -63,7 +64,11 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     @FXML private VBox messageList;
     
-    @FXML private TextField infoLastChanged;
+    @FXML private Text infoLastChanged;
+    
+    @FXML private ImageView infoStatusIcon;
+    
+    @FXML private Text infoStatusText;
     
     private GalleryNode activeGallery;
     private final GalleryManager galleryManager;
@@ -185,9 +190,13 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
             }
             else
                 this.infoLastChanged.setText("Unbekannt");
+            
+            this.infoStatusText.setText("Aktuell");
         }
-        else
+        else {
             this.infoLastChanged.setText("");
+            this.infoStatusText.setText("");
+        }
     }
     
     public GalleryNode getActiveGallery() {
