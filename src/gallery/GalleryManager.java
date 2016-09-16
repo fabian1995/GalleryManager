@@ -1,5 +1,6 @@
 package gallery;
 
+import gallerydemo.message.MessageController;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.VBox;
 import org.json.JSONObject;
 
 public class GalleryManager {
@@ -134,6 +137,20 @@ public class GalleryManager {
             }
         }
         return lastAdded;
+    }
+    
+    public void findUnconfirmedGalleries(TreeView tree, VBox messageList) {
+        this.findUnconfirmedGalleries(tree, messageList, this.trunk);
+    }
+    
+    private void findUnconfirmedGalleries(TreeView tree, VBox messageList, GalleryNode g) {
+        if (g.isGallery() && g.hasOrigin() && !g.isOriginConfirmed()) {
+            MessageController m = new MessageController(messageList, "Galerie vom Server gelöscht", g.getName(), tree, g);
+            messageList.getChildren().add(m);
+        }
+        for (Object n : g.getChildren()) {
+            this.findUnconfirmedGalleries(tree, messageList, (GalleryNode)n);
+        }
     }
     
     public void readCacheFile() {

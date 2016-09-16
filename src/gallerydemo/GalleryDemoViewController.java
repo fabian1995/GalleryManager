@@ -137,12 +137,13 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
             // Disable "Export gallery" buttons
             this.searching = true;
             this.galleryMenuController.actualizeButtons();
-            
+
             // Search server galleries
             SearchGalleryService task = new SearchGalleryService(this, this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk(), true, () -> {
                 this.searching = false;
                 this.fileMenuController.actualizeButtons();
                 this.galleryMenuController.actualizeButtons();
+                this.galleryManager.findUnconfirmedGalleries(this.locationTreeView, this.messageList);
             });
             
             task.start();

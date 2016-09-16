@@ -1,0 +1,19 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.task {
+    -fx-padding: 5px 5px 5px 5px;
+}
+
+
+.task Text.title {
+    -fx-font-size: 14px;
+    -fx-fill: #8a8a8a;
+}
+
+.task Text.desc {
+    -fx-font-size: 18px;
+    -fx-fill: #729FCF;
+    -fx-font-weight: bold;
+}

@@ -24,19 +24,25 @@
         </top>
 
         <left>
+            <ScrollPane fx:id="scrollTreeContainer">
+                <TreeView fx:id="locationTreeView" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="250" />
+            </ScrollPane>
+        </left>
+        
+        <right>
             <BorderPane>
                 <center>
-                    <ScrollPane fx:id="scrollTreeContainer">
-                        <TreeView fx:id="locationTreeView" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="250" />
-                    </ScrollPane>
+                    <VBox fx:id="messageList">
+                        <Text text="Benachrichtigungen" styleClass="h1" />
+                    </VBox>
                 </center>
                 <bottom>
-                    <VBox fx:id="taskList">
+                    <VBox fx:id="taskList" prefHeight="200.0">
                         <Text text="Aufgaben" styleClass="h1" /> 
                     </VBox>
                 </bottom>
             </BorderPane>
-        </left>
+        </right>
 
         <center>
             <StackPane fx:id="centerPanel">
