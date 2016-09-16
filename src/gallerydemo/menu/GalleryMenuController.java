@@ -122,7 +122,8 @@ public final class GalleryMenuController extends AbstractMenu {
         if (this.controller.getActiveGallery() != null
                 && this.controller.getActiveGallery().isGallery()) {
             
-            if (this.controller.getActiveGallery().getOrigin().exists()) {
+            if (this.controller.getActiveGallery().getOrigin().exists()
+                    && this.controller.getActiveGallery().isOriginConfirmed()) {
                 this.syncGalleryButton.setVisible(true);
                 this.exportGalleryButton.setVisible(false);
             }
