@@ -31,13 +31,20 @@
         
         <right>
             <BorderPane>
+                <top>
+                    <VBox minHeight="80.0">
+                        <Text text="Informationen" styleClass="h1"/>
+                        <Text text="Zuletzt geändert:" styleClass="label"/>
+                        <TextField fx:id="infoLastChanged" editable="false"/>  
+                    </VBox>
+                </top>
                 <center>
                     <VBox fx:id="messageList">
                         <Text text="Benachrichtigungen" styleClass="h1" />
                     </VBox>
                 </center>
                 <bottom>
-                    <VBox fx:id="taskList" prefHeight="200.0">
+                    <VBox fx:id="taskList" minHeight="200.0">
                         <Text text="Aufgaben" styleClass="h1" /> 
                     </VBox>
                 </bottom>

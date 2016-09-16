@@ -4,13 +4,11 @@
  */
 package gallerydemo.message;
 
-import gallery.GalleryManager;
 import gallery.GalleryNode;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;

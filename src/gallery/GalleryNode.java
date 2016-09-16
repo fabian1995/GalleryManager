@@ -6,13 +6,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.json.JSONException;
 
 import org.json.JSONObject;
 
@@ -20,12 +23,16 @@ public final class GalleryNode extends TreeItem {
     
     public static final String GALLERY_JSON_CONF_NAME = "name";
     public static final String GALLERY_JSON_CONF_ORIGIN = "origin";
+    public static final String GALLERY_JSON_CONF_LASTCHANGED = "lastChanged";
 
     private String name;
+    private Date lastChanged = null;
+    
     private boolean isImported;
     private boolean createImageList;
     private File origin = null;
     private boolean originConfirmed = false;
+    private GalleryNode originNode = null;
 
     private File config;
     
@@ -86,6 +93,15 @@ public final class GalleryNode extends TreeItem {
             this.saveConfigFile();
         }
         
+        this.updateIcon();
+        
+        if (this.type == NodeType.GALLERY && this.createImageList)
+            this.createImageList();
+        
+        //Logger.getLogger("logfile").log(Level.INFO, "[log] My name is: {0} and I am a {1}", new Object[]{this.getName(), this.type});
+    }
+    
+    public void updateIcon() {
         ImageView icon = new ImageView();
         if (this.type == NodeType.TRUNK)
             icon.setImage(new Image(getClass().getResourceAsStream("icon_trunk.png")));
@@ -95,14 +111,15 @@ public final class GalleryNode extends TreeItem {
             icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
         else if (this.hasOrigin() && !this.originConfirmed)
             icon.setImage(new Image(getClass().getResourceAsStream("icon_nocloud.png")));
+        else if (this.originNode != null && this.originNode.getLastChanged().getTime() > this.lastChanged.getTime())
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_servernewer.png")));
+        else if (this.originNode != null && this.originNode.getLastChanged().getTime() < this.lastChanged.getTime())
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_localnewer.png")));
+        else if (this.hasOrigin())
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
         else
             icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
         super.setGraphic(icon);
-        
-        if (this.type == NodeType.GALLERY && this.createImageList)
-            this.createImageList();
-        
-        Logger.getLogger("logfile").log(Level.INFO, "[log] My name is: {0}", this.getName());
     }
     
     public boolean contains(String nodeName) {
@@ -136,6 +153,31 @@ public final class GalleryNode extends TreeItem {
         return name;
     }
     
+    public Date getLastChanged() {
+        return this.lastChanged;
+    }
+    
+    public void setLastChanged(Date d) {
+        this.lastChanged = d;
+        this.saveConfigFile();
+        this.updateIcon();
+    }
+    
+    public void galleryChanged() {
+        this.lastChanged = new Date();
+        this.saveConfigFile();
+        this.updateIcon();
+    }
+    
+    public void setOriginNode(GalleryNode node) {
+        this.originNode = node;
+        this.updateIcon();
+    }
+    
+    public GalleryNode getOriginNode() {
+        return this.originNode;
+    }
+    
     public boolean isImported() {
         return this.isImported;
     }
@@ -154,9 +196,9 @@ public final class GalleryNode extends TreeItem {
     }
     
     public void setOriginConfirmed() {
-        ImageView icon = new ImageView();
-        icon.setImage(new Image(getClass().getResourceAsStream("icon_cloud.png")));
-        super.setGraphic(icon);
+        Platform.runLater(() -> {
+            this.updateIcon();
+        });
         this.originConfirmed = true;
     }
     
@@ -279,8 +321,15 @@ public final class GalleryNode extends TreeItem {
         JSONObject rootObject = new JSONObject(rawJSON);
 
         this.setName(rootObject.getString(GALLERY_JSON_CONF_NAME));
-        if (this.type == NodeType.GALLERY)
+        if (this.type == NodeType.GALLERY) {
             this.origin = new File(rootObject.getString(GALLERY_JSON_CONF_ORIGIN));
+            try {
+                this.lastChanged = new Date(rootObject.getLong(GALLERY_JSON_CONF_LASTCHANGED));
+            } catch (JSONException e) {
+                this.lastChanged = new Date(0);
+                this.saveConfigFile();
+            }
+        }
     }
     
     public void saveConfigFile() {
@@ -300,6 +349,8 @@ public final class GalleryNode extends TreeItem {
                 configObject.put(GALLERY_JSON_CONF_ORIGIN, "");
             else
                 configObject.put(GALLERY_JSON_CONF_ORIGIN, this.origin.getAbsolutePath());
+            configObject.put(GALLERY_JSON_CONF_LASTCHANGED, 
+                    this.lastChanged == null ? 0 : this.lastChanged.getTime());
         }
         
         try (FileWriter configFile = new FileWriter(this.config)) {

@@ -46,6 +46,11 @@ Text.h1 {
     -fx-fill: #708090;
 }
 
+Text.label {
+    -fx-font-size: 12px;
+    -fx-fill: #8a8a8a;
+}
+
 Button.topMenuButton, Button.fullScreenButton {
     -fx-graphic-text-gap: 0px;
     -fx-text-alignment: center;

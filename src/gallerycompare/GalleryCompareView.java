@@ -16,10 +16,13 @@ import javafx.scene.layout.BorderPane;
  */
 public class GalleryCompareView extends BorderPane {
     
+    public final GalleryCompareViewController controller;
+    
     public GalleryCompareView(GalleryNode g1, GalleryNode g2) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("GalleryCompareView.fxml"));
         fxmlLoader.setRoot((BorderPane)this);
-        fxmlLoader.setController(new GalleryCompareViewController(g1, g2));
+        this.controller = new GalleryCompareViewController(g1, g2);
+        fxmlLoader.setController(this.controller);
         
         try {
             fxmlLoader.load();

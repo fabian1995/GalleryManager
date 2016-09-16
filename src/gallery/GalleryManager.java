@@ -85,7 +85,7 @@ public class GalleryManager {
     }
     
     // TODO use this function for creating and importing galleries
-    public void addGallery(String path, String name) {
+    public GalleryNode addGallery(String path, String name) {
         path = path.replace('\\', '/');
         List<String> pathList = new LinkedList<>(Arrays.asList(path.split("/")));
         System.out.println("" + Arrays.toString(pathList.toArray()));
@@ -97,6 +97,8 @@ public class GalleryManager {
         if (this.compareTrunk != null) {
             this.writeCacheFile();
         }
+        
+        return newNode;
     }
 
     private GalleryNode insertGallery(String configName, List<String> path, boolean createImageList) {
@@ -120,9 +122,9 @@ public class GalleryManager {
             }
             else {
                 boolean isImported = false;
-                
+                GalleryNode c = null;
                 if (comparison != null) {
-                    GalleryNode c = comparison.getChildNode(name);
+                    c = comparison.getChildNode(name);
                     if (c != null && c.isGallery()) {
                         isImported = true;
                         c.setOriginConfirmed();
@@ -130,10 +132,14 @@ public class GalleryManager {
                     if (c != null)
                         comparison = c;
                 }
-                
+                System.out.println("adding: " + this.root.getAbsolutePath() + "/" + pathToGallery);
                 lastAdded = new GalleryNode(new File(this.root.getAbsolutePath() + "/" + pathToGallery), isImported, createImageList);
                 position.getChildren().add(lastAdded);
                 position = lastAdded;
+                
+                if (c != null) {
+                    c.setOriginNode(lastAdded);
+                }
             }
         }
         return lastAdded;

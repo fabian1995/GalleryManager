@@ -56,7 +56,7 @@ public final class GalleryMenuController extends AbstractMenu {
             GalleryNode g = controller.getActiveGallery();
 
             if (g.getOrigin() != null && g.getOrigin().exists()) {
-                Parent root1 = new GalleryCompareView(g, new GalleryNode(g.getOrigin()));
+                Parent root1 = new GalleryCompareView(g, g.getOriginNode());
                 Stage stage = new Stage();
                 stage.setTitle(g.getName() + " synchronisieren");
                 stage.setScene(new Scene(root1));
@@ -66,6 +66,8 @@ public final class GalleryMenuController extends AbstractMenu {
                 stage.setOnCloseRequest((WindowEvent we) -> {
                     controller.enableInput();
                     controller.reloadGalleryImages(g, true);
+                    ((GalleryCompareView)root1).controller.updateTimestamps();
+                    controller.getActiveGallery().updateIcon();
                 });
                 controller.disableInput(g.getName() + " wird synchronisiert...");
             }
@@ -95,7 +97,8 @@ public final class GalleryMenuController extends AbstractMenu {
                     () -> {
                         g.setOrigin(target);
                         g.saveConfigFile();
-                        this.controller.getRemoteManager().addGallery(relPath, g.getName());
+                        GalleryNode newNode = this.controller.getRemoteManager().addGallery(relPath, g.getName());
+                        newNode.setLastChanged(g.getLastChanged());
                         this.actualizeButtons();
                     }
             );
@@ -109,6 +112,8 @@ public final class GalleryMenuController extends AbstractMenu {
             List<File> list = fileChooser.showOpenMultipleDialog(new Stage());
             
             if (list != null) {
+                this.controller.getActiveGallery().galleryChanged();
+                this.controller.refreshGalleryInfo();
                 AddImageService task = new AddImageService(controller, this.controller.getActiveGallery(), list);
                 task.start();
             }

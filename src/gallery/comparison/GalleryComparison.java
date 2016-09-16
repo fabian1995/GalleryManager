@@ -25,6 +25,8 @@ public class GalleryComparison {
 
     private int statEqualFiles;
     private int statNewFiles;
+    
+    private boolean[] changed = {false, false};
 
     @SuppressWarnings("unchecked")
     private final Map<String, File>[] newFiles = new Map[2];
@@ -82,6 +84,10 @@ public class GalleryComparison {
     public GalleryNode getGallery(int origin) {
         return this.gallery[origin];
     }
+    
+    public boolean[] getChangeFlags() {
+        return this.changed;
+    }
 
     public void copy(String fileName, int origin) throws FileNotFoundException, IOException {
 
@@ -95,6 +101,8 @@ public class GalleryComparison {
         Files.copy(source, dest, StandardCopyOption.COPY_ATTRIBUTES);
         this.newFiles[origin].remove(fileName);
         this.statEqualFiles++;
+        
+        this.changed[origin == 0 ? 1 : 0] = true;
     }
 
     public void delete(String fileName, int origin) throws FileNotFoundException {
@@ -106,6 +114,8 @@ public class GalleryComparison {
         this.newFiles[origin].get(fileName).delete();
         this.newFiles[origin].remove(fileName);
         this.statEqualFiles++;
+        
+        this.changed[origin] = true;
     }
 
     public void copyAll(int origin) throws IOException {
@@ -118,6 +128,8 @@ public class GalleryComparison {
         }
 
         this.newFiles[origin].clear();
+        
+        this.changed[origin == 0 ? 1 : 0] = true;
     }
 
     public void deleteAll(int origin) {
@@ -128,6 +140,8 @@ public class GalleryComparison {
         }
 
         this.newFiles[origin].clear();
+        
+        this.changed[origin] = true;
     }
 
     public int numberOfEqualFiles() {
@@ -140,18 +154,4 @@ public class GalleryComparison {
         return this.statNewFiles;
     }
 
-    public void printStats() {
-
-        System.out.println("Stats: new=" + this.statNewFiles + ", equal=" + this.statEqualFiles);
-
-        System.out.println("\nNew to location 1:");
-        for (String f : this.newFiles[0].keySet()) {
-            System.out.println(" - " + f);
-        }
-
-        System.out.println("\nNew to location 2:");
-        for (String f : this.newFiles[1].keySet()) {
-            System.out.println(" - " + f);
-        }
-    }
 }

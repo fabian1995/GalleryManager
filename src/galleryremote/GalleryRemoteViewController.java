@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -91,7 +92,7 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
                                 GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, true, gallery.getName(), false);
                                 importedGallery.setOrigin(gallery.getConfigFile());
                                 importedGallery.saveConfigFile();
-                                gallery.setImportedTrue(true);
+                                Platform.runLater(() -> {gallery.setImportedTrue(true);});
                             }
                     );
                     task.start();

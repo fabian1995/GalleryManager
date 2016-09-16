@@ -18,12 +18,14 @@ import gallerydemo.menu.GalleryMenuController;
 import gallerydemo.settings.GallerySettings;
 import gallerydemo.task.TaskController;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
@@ -60,6 +62,8 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     @FXML private VBox taskList;
     
     @FXML private VBox messageList;
+    
+    @FXML private TextField infoLastChanged;
     
     private GalleryNode activeGallery;
     private final GalleryManager galleryManager;
@@ -169,6 +173,21 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         } else {
             this.imagePane.getChildren().clear();
         }
+        
+        this.refreshGalleryInfo();
+    }
+    
+    public void refreshGalleryInfo() {
+        if (this.activeGallery.isGallery()) {
+            if (this.activeGallery.getLastChanged().getTime() > 0) {
+                SimpleDateFormat df = new SimpleDateFormat("dd. MM. yyyy, HH:mm");
+                this.infoLastChanged.setText(df.format(this.activeGallery.getLastChanged()));
+            }
+            else
+                this.infoLastChanged.setText("Unbekannt");
+        }
+        else
+            this.infoLastChanged.setText("");
     }
     
     public GalleryNode getActiveGallery() {
