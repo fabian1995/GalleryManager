@@ -31,7 +31,7 @@
         </left>
         
         <right>
-            <BorderPane>
+            <BorderPane maxWidth="200">
                 <BorderPane.margin>
                     <Insets left="10.0" right="10.0" top="10.0" />
                 </BorderPane.margin>
