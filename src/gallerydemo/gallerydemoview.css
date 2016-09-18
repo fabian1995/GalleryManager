@@ -61,6 +61,10 @@ HBox.infobox {
     -fx-padding: 5px 5px 5px 5px;
 }
 
+VBox.sepSpace {
+    -fx-padding: 0 0 10px 0;
+}
+
 Button.topMenuButton, Button.fullScreenButton {
     -fx-graphic-text-gap: 0px;
     -fx-text-alignment: center;
