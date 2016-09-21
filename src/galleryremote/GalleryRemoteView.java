@@ -6,8 +6,6 @@
 package galleryremote;
 
 import gallery.GalleryManager;
-import gallery.GalleryNode;
-import java.io.File;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
@@ -18,10 +16,10 @@ import javafx.scene.layout.BorderPane;
  */
 public class GalleryRemoteView extends BorderPane {
     
-    public GalleryRemoteView(GalleryManager remoteManager) {
+    public GalleryRemoteView(GalleryManager localManager, GalleryManager remoteManager) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("GalleryRemoteView.fxml"));
         fxmlLoader.setRoot((BorderPane)this);
-        fxmlLoader.setController(new GalleryRemoteViewController(remoteManager));
+        fxmlLoader.setController(new GalleryRemoteViewController(localManager, remoteManager));
         
         try {
             fxmlLoader.load();

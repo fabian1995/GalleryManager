@@ -6,6 +6,7 @@ package gallerysettings;
 
 import gallery.GalleryManager;
 import gallery.GalleryNode;
+import gallery.GalleryNodeSettings;
 import gallerydemo.settings.GallerySettings;
 import java.io.File;
 import java.net.URL;
@@ -26,38 +27,45 @@ import javafx.stage.Stage;
  * @author fabian
  */
 public class GallerySettingsViewController implements Initializable {
-    
+
     private final GallerySettings settings;
-    
-    @FXML private TextField localDirField;
-    @FXML private Button localDirButton;
-    @FXML private CheckBox createGalleriesCheckbox;
-    
-    @FXML private TextField remoteDirField;
-    @FXML private Button remoteDirButton;
-    
-    @FXML private Button saveButton;
+
+    @FXML
+    private TextField localDirField;
+    @FXML
+    private Button localDirButton;
+    @FXML
+    private CheckBox createGalleriesCheckbox;
+
+    @FXML
+    private TextField remoteDirField;
+    @FXML
+    private Button remoteDirButton;
+
+    @FXML
+    private Button saveButton;
     //@FXML private Button cancelButton;
-    
+
     public GallerySettingsViewController(GallerySettings settings) {
         this.settings = settings;
     }
-    
+
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         Logger.getLogger("logfile").info("[init] GallerySettingsView");
-        
+
         this.saveButton.setDisable(true);
 
         this.localDirField.setText(settings.getLocalGalleryLocation().getPath());
         this.remoteDirField.setText(settings.getRemoteGalleryLocation().getPath());
-        
+
         this.localDirButton.setOnAction((ActionEvent) -> {
             DirectoryChooser fileChooser = new DirectoryChooser();
             fileChooser.setTitle("Ordner für Bilder auswählen");
@@ -68,7 +76,7 @@ public class GallerySettingsViewController implements Initializable {
                 this.localDirField.setText(dir.getPath());
             }
         });
-        
+
         this.remoteDirButton.setOnAction((ActionEvent) -> {
             DirectoryChooser fileChooser = new DirectoryChooser();
             fileChooser.setTitle("Ordner zum Synchronisieren auswählen");
@@ -78,18 +86,18 @@ public class GallerySettingsViewController implements Initializable {
                 this.remoteDirField.setText(dir.getPath());
             }
         });
-        
+
         this.saveButton.setOnAction((ActionEvent) -> {
             this.saveButton.setDisable(true);
-            
+
             this.settings.save();
-            
+
             if (this.createGalleriesCheckbox.isSelected()) {
                 System.out.println("Searching...");
                 this.search(this.settings.getLocalGalleryLocation());
             }
-            
-            Stage stage = (Stage)this.saveButton.getScene().getWindow();
+
+            Stage stage = (Stage) this.saveButton.getScene().getWindow();
             stage.close();
         });
     }
@@ -100,11 +108,11 @@ public class GallerySettingsViewController implements Initializable {
     }
 
     private void search(File directory, List<String> path) {
-        
+
         boolean containsDirectory = false;
-        
+
         System.out.println(" -> " + directory.getName());
-        
+
         for (File f : directory.listFiles()) {
 
             if (f.isDirectory()) {
@@ -114,17 +122,14 @@ public class GallerySettingsViewController implements Initializable {
                 containsDirectory = true;
             }
         }
-        
+
         if (!containsDirectory) {
             System.out.println(directory.getName() + " is gallery");
+            // TODO Test this function
             GalleryNode newGallery = new GalleryNode(
                     new File(directory.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME),
-                    false,
-                    false,
-                    directory.getName(),
-                    false
+                    new GalleryNodeSettings(GalleryNodeSettings.GalleryType.GALLERY)
             );
-            newGallery.saveConfigFile();
         }
     }
 }

@@ -7,15 +7,13 @@ package galleryremote;
 
 import gallery.GalleryManager;
 import gallery.GalleryNode;
-import gallery.load.CopyGalleryService;
+import gallery.load.DuplicateGalleryService;
 import gallery.load.ServiceControllerInterface;
 import gallerydemo.task.TaskController;
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,9 +29,7 @@ import javafx.scene.layout.VBox;
  */
 public class GalleryRemoteViewController implements Initializable, ServiceControllerInterface {
     
-    //private final File remoteLocation;
-    //private final GalleryNode baseTree;
-    
+    private final GalleryManager localManager;
     private final GalleryManager remoteManager;
     
     @FXML
@@ -45,9 +41,10 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
     @FXML
     private VBox taskList;
 
-    public GalleryRemoteViewController(GalleryManager remoteManager) {
+    public GalleryRemoteViewController(GalleryManager localManager, GalleryManager remoteManager) {
         //this.remoteLocation = remote;
         //this.baseTree = base;
+        this.localManager = localManager;
         this.remoteManager = remoteManager;
     }
     
@@ -60,11 +57,6 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
     public void initialize(URL url, ResourceBundle rb) {
         
         Logger.getLogger("logfile").info("[init] GalleryRemoteView");
-        
-        //GalleryManager g = new GalleryManager(this.remoteLocation, this.baseTree);
-        //g.search();
-        //g.readCacheFile();
-        //g.writeCacheFile();
 
         locationTreeView.setRoot(this.remoteManager.getTrunk());
         locationTreeView.setShowRoot(false);
@@ -73,33 +65,11 @@ public class GalleryRemoteViewController implements Initializable, ServiceContro
         this.buttonImport.setOnAction((ActionEvent event) -> {
             for (Object s : locationTreeView.getSelectionModel().getSelectedItems().toArray()) {
                 final GalleryNode gallery = ((GalleryNode)s);
-                if (!gallery.isImported() && gallery.isGallery()) {
-                    File origin = gallery.getLocation();
-                    
-                    File target = new File(
-                            remoteManager.getCompareTrunk().getConfigFile().getAbsolutePath().replace('\\', '/') +
-                            "/" +
-                            origin.toString().replace('\\', '/').replaceAll(
-                                    remoteManager.getTrunk().getLocation().getAbsolutePath().replace('\\', '/'), ""
-                            )
-                    );
-                    Logger.getLogger("logfile").log(Level.INFO, "[import] {0}: {1} -> {2}", new Object[]{gallery.getFileName(), origin, target});
-                    gallery.setImportedTrue(false);
-                    
-                    CopyGalleryService task = new CopyGalleryService(this, origin, target,
-                            "Importing gallery '" + gallery.getName() + "'",
-                            () -> {
-                                // TODO: copy gallery into local tree, do not refresh
-                                GalleryNode importedGallery = new GalleryNode(new File(target + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, true, gallery.getName(), false);
-                                importedGallery.setLastChanged(gallery.getLastChanged());
-                                importedGallery.setOriginNode(gallery);
-                                importedGallery.saveConfigFile();
-                                Platform.runLater(() -> {gallery.setImportedTrue(true);});
-                            }
-                    );
+                if (gallery.getSettings().compareNode == null && !gallery.getSettings().processing && gallery.isGallery()) {
+                    DuplicateGalleryService task = new DuplicateGalleryService(this, gallery, this.localManager.getTrunk(), "Importing gallery '" + gallery.getData().name + "'", null);
                     task.start();
                 } else {
-                    Logger.getLogger("logfile").log(Level.INFO, "[info] Did NOT import {0}", gallery.getFileName());
+                    Logger.getLogger("logfile").log(Level.INFO, "[info] Did NOT import {0}", gallery.getLocation().getName());
                 }
             }
         });

@@ -55,22 +55,25 @@ public class GalleryCompareViewController implements Initializable {
         if (changeFlags[0] && changeFlags[1]) {
             Logger.getLogger("logfile").log(Level.INFO, "[Compare] Both galleries have been changed.");
             this.gallery1.galleryChanged();
-            this.gallery2.setLastChanged(this.gallery1.getLastChanged());
+            this.gallery2.getData().lastChanged = this.gallery1.getData().lastChanged;
         }
         else if (changeFlags[0] && !changeFlags[1]) {
             Logger.getLogger("logfile").log(Level.INFO, "[Compare] Local gallery has been changed.");
-            if (this.gallery2.getLastChanged().getTime() == 0)
+            if (this.gallery2.getData().lastChanged.getTime() == 0)
                 this.gallery2.galleryChanged();
-            this.gallery1.setLastChanged(this.gallery2.getLastChanged());
+            this.gallery1.getData().lastChanged = this.gallery2.getData().lastChanged;
         }
         else if (!changeFlags[0] && changeFlags[1]) {
             Logger.getLogger("logfile").log(Level.INFO, "[Compare] Remote Gallery has been changed.");
-            if (this.gallery1.getLastChanged().getTime() == 0)
+            if (this.gallery1.getData().lastChanged.getTime() == 0)
                 this.gallery1.galleryChanged();
-            this.gallery2.setLastChanged(this.gallery1.getLastChanged());
+            this.gallery2.getData().lastChanged = this.gallery1.getData().lastChanged;
         }
         else {
             Logger.getLogger("logfile").log(Level.INFO, "[Compare] No changes registered.");
         }
+        
+        this.gallery1.updateView();
+        this.gallery2.updateView();
     }
 }

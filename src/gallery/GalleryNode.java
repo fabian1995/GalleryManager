@@ -1,9 +1,9 @@
 package gallery;
 
+import static gallery.GalleryNodeSettings.GalleryStatus;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -15,123 +15,95 @@ import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.json.JSONException;
 
-import org.json.JSONObject;
 
 public final class GalleryNode extends TreeItem {
-    
-    public static final String GALLERY_JSON_CONF_NAME = "name";
-    public static final String GALLERY_JSON_CONF_ORIGIN = "origin";
-    public static final String GALLERY_JSON_CONF_LASTCHANGED = "lastChanged";
 
-    private String name;
-    private Date lastChanged = null;
+    private final File config;
+    private final GalleryNodeSettings settings;
     
-    private boolean isImported;
-    private boolean createImageList;
-    private boolean originConfirmed = false;
-    private GalleryNode originNode = null;
-
-    private File config;
+    private final GalleryNodeData data;
     
-    private final List<GalleryImage> imageList = new LinkedList<>();
+    private List<GalleryImage> imageList = null;
     
-    public enum NodeType {
-        COLLECTION, GALLERY, TRUNK
-    }
-    
-    private NodeType type;
-    
-    public GalleryNode(File config) {
-        this(config, false, true, null, false);
-    }
-    
-    public GalleryNode(File config, boolean isImported, boolean createImageList) {
-        this(config, isImported, createImageList, null, false);
-    }
-    
-    public GalleryNode(File config, boolean isImported, boolean createImageList, String name, boolean isTrunk) {
-        this.isImported = isImported;
-        this.createImageList = createImageList;
+    public GalleryNode (File config, GalleryNodeSettings settings) {
         this.config = config;
+        this.settings = settings;
         
-        Logger.getLogger("logfile").log(Level.INFO, "[log] Creating gallery node: {0}, {1}", new Object[]{config.getAbsolutePath(), config.exists()});
-
-        if (isTrunk)
-            this.type = NodeType.TRUNK;
+        if (this.settings.type != GalleryNodeSettings.GalleryType.TRUNK)
+            this.data = GalleryNodeData.readGalleryNodeData(this.config);
+        else
+            this.data = GalleryNodeData.createTrunkNodeData();
         
-        if (config.exists() && config.isFile() && config.getName().endsWith(".json")) {
-            if (config.getName().equals(GalleryManager.COLLECTION_CONFIG_FILE_NAME))
-                this.type = NodeType.COLLECTION;
-            else if (config.getName().equals(GalleryManager.GALLERY_CONFIG_FILE_NAME))
-                this.type = NodeType.GALLERY;
-            Logger.getLogger("logfile").log(Level.INFO, "reading config");
-            this.readConfigFile();
-        }
-        else if(name == null && config.exists()) {
-            this.type = NodeType.COLLECTION;
-            this.config = new File(config.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME);
-            if (this.config.exists()) {
-                this.readConfigFile();
-            }
-            else {
-                this.setName(config.getName());
-                this.saveConfigFile();
-            }
-            
-        }
-        else if(name != null){
-            this.setName(name);
-            if (this.config != null && this.config.exists() && this.config.isFile())
-                this.saveConfigFile();
-        }
-        else {
-            this.setName(this.config.getParentFile().getName());
-            this.saveConfigFile();
-        }
-        
-        this.updateIcon();
-        
-        if (this.type == NodeType.GALLERY && this.createImageList)
-            this.createImageList();
-        
-        //Logger.getLogger("logfile").log(Level.INFO, "[log] My name is: {0} and I am a {1}", new Object[]{this.getName(), this.type});
+        this.updateView();
     }
     
-    public void updateIcon() {
+    public GalleryNode (File config, GalleryNodeData data, GalleryNodeSettings settings) {
+        this.config = config;
+        this.data = data;
+        this.settings = settings;
+        
+        GalleryNodeData.saveGalleryNodeData(config, data);
+        
+        this.updateView();
+    }
+    
+    public GalleryNodeData getData() {
+        return this.data;
+    }
+    
+    public GalleryNodeSettings getSettings() {
+        return this.settings;
+    }
+    
+    public void updateView() {
+        super.setValue(this.data.name);
+        
         ImageView icon = new ImageView();
-        if (this.type == NodeType.TRUNK)
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_trunk.png")));
-        else if (this.type == NodeType.COLLECTION)
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_folder.png")));
-        else if (this.isImported)
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
-        //else if (this.originNode != null && !this.originConfirmed)
-            //icon.setImage(new Image(getClass().getResourceAsStream("icon_nocloud.png")));
-        else if (this.originNode != null && this.originNode.getLastChanged().getTime() > this.getLastChanged().getTime())
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_servernewer.png")));
-        else if (this.originNode != null && this.originNode.getLastChanged().getTime() < this.getLastChanged().getTime())
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_localnewer.png")));
-        else if (this.originNode != null)
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
-        else
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
+        if (this.settings.processing)
+            icon.setImage(new Image(getClass().getResourceAsStream("icon_pending.png")));
+        
+        else if (null != this.settings.type)
+            switch (this.settings.type) {
+            case TRUNK:
+                icon.setImage(new Image(getClass().getResourceAsStream("icon_trunk.png")));
+                break;
+            case COLLECTION:
+                icon.setImage(new Image(getClass().getResourceAsStream("icon_folder.png")));
+                break;
+            default:
+                switch (this.getStatus()) {
+                    case OFFLINE:      
+                        icon.setImage(new Image(getClass().getResourceAsStream("icon_gallery.png")));
+                        break;
+                    case UPTODATE:
+                        icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
+                        break;
+                    case LOCALNEWER:
+                        icon.setImage(new Image(getClass().getResourceAsStream("icon_localnewer.png")));
+                        break;
+                    case SERVERNEWER:
+                        icon.setImage(new Image(getClass().getResourceAsStream("icon_servernewer.png"))); break;
+                }   break;
+        }
         //TODO only when necessary
         Platform.runLater(() -> {super.setGraphic(icon);});
     }
     
-    public boolean contains(String nodeName) {
-        for (Object s : this.getChildren().toArray()) {
-            if (((GalleryNode)s).getFileName().equals(nodeName))
-                return true;
-        }
-        return false;
+    public GalleryNodeSettings.GalleryStatus getStatus() {
+        if (this.settings.compareNode == null)
+            return GalleryStatus.OFFLINE;
+        if (this.settings.compareNode.getData().lastChanged.getTime() == this.data.lastChanged.getTime())
+            return GalleryStatus.UPTODATE;
+        else if (this.settings.compareNode.getData().lastChanged.getTime() < this.data.lastChanged.getTime())
+            return GalleryStatus.LOCALNEWER;
+        else
+            return GalleryStatus.SERVERNEWER;
     }
     
     public GalleryNode getChildNode(String nodeName) {
         for (Object s : this.getChildren().toArray()) {
-            if (((GalleryNode)s).getFileName().equals(nodeName)) {
+            if (((GalleryNode)s).getLocation().getName().equals(nodeName)) {
                 return (GalleryNode)s;
             }
         }
@@ -141,7 +113,7 @@ public final class GalleryNode extends TreeItem {
     public void sortChildren() {
         this.getChildren().sort(Comparator.comparing((GalleryNode g) -> {
             return g.isGallery();
-        }).thenComparing((GalleryNode g1, GalleryNode g2) -> g1.getName().compareTo(g2.getName())));
+        }).thenComparing((GalleryNode g1, GalleryNode g2) -> g1.data.name.compareTo(g2.data.name)));
         this.getChildren().stream().forEach((g) -> {
             ((GalleryNode)g).sortChildren();
         });
@@ -149,110 +121,31 @@ public final class GalleryNode extends TreeItem {
 
     @Override
     public String toString() {
-        return name;
-    }
-    
-    public Date getLastChanged() {
-        //TODO always initialize
-        if (this.lastChanged == null)
-            this.lastChanged = new Date(0);
-        return this.lastChanged;
-    }
-    
-    public void setLastChanged(Date d) {
-        this.lastChanged = d;
-        this.saveConfigFile();
-        this.updateIcon();
+        return this.data.name;
     }
     
     public void galleryChanged() {
-        this.lastChanged = new Date();
-        this.saveConfigFile();
-        this.updateIcon();
+        this.data.lastChanged = new Date();
+        GalleryNodeData.saveGalleryNodeData(this.config, this.data);
+        this.updateView();
     }
     
-    public void setOriginNode(GalleryNode node) {
-        this.originNode = node;
-        this.updateIcon();
-    }
-    
-    public GalleryNode getOriginNode() {
-        return this.originNode;
-    }
-    
-    public boolean isImported() {
-        return this.isImported;
-    }
-    
-    public void setImportedTrue(boolean complete) {
-        // Update status
-        this.isImported = true;
-        
-        // Update icon
-        ImageView icon = new ImageView();
-        if (complete)
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_imported.png")));
-        else
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_pending.png")));
-        super.setGraphic(icon);
-    }
-    
-    public void setOriginConfirmed() {
-        Platform.runLater(() -> {
-            this.updateIcon();
-        });
-        this.originConfirmed = true;
-    }
-    
-    public boolean isOriginConfirmed() {
-        return this.originConfirmed;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-        super.setValue(name);
-    }
-    
-    public String getFileName() {
-        // TODO: Is config.isFile always true?
-        return this.config.isFile() ? this.config.getParentFile().getName() : this.config.getName();
-    }
-    
-    public String getFolderName() {
-        return this.config.getParentFile().getName();
+    public File getConfigFile() {
+        return this.config;
     }
 
     public File getLocation() {
-        return this.config.isFile() ? this.config.getParentFile() : this.config;
+        if (this.settings.type == GalleryNodeSettings.GalleryType.TRUNK)
+            return this.config;
+        return this.config.getParentFile();
     }
 
-    /*public File getOrigin() {
-        return this.origin;
-    }*/
-    
-    /*public boolean hasOrigin() {
-        return this.origin != null && !this.origin.getPath().equals("");
-    }*/
-    
-    /*public void setOrigin(File origin) {
-        this.origin = origin;
-        if (this.origin.exists()) {
-            ImageView icon = new ImageView();
-            icon.setImage(new Image(getClass().getResourceAsStream("icon_cloud.png")));
-            super.setGraphic(icon);
-        }
-    }*/
-
     public boolean isGallery() {
-        return this.type == NodeType.GALLERY;
+        return this.settings.type == GalleryNodeSettings.GalleryType.GALLERY;
     }
     
     public boolean isTrunk() {
-        return this.type == NodeType.TRUNK;
+        return this.settings.type == GalleryNodeSettings.GalleryType.TRUNK;
     }
     
     @Deprecated
@@ -264,6 +157,9 @@ public final class GalleryNode extends TreeItem {
     }
     
     public void createImageList() {
+        if (this.imageList == null)
+            this.imageList = new ArrayList<>();
+        
         this.imageList.clear();
         
         File[] fileList = this.getLocation().listFiles((File dir, String fileName) -> {
@@ -276,7 +172,7 @@ public final class GalleryNode extends TreeItem {
                 try {
                     this.imageList.add(new GalleryImage(f));
                 } catch (IOException ex) {
-                    Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
+                    Logger.getLogger("logfile").log(Level.SEVERE, ex.getMessage());
                 }
             }
         }
@@ -285,17 +181,13 @@ public final class GalleryNode extends TreeItem {
     }
     
     public synchronized void addImage(File image) throws IOException {
-        this.imageList.add(new GalleryImage(image));
+        this.getImageList(false).add(new GalleryImage(image));
     }
     
     public List<GalleryImage> getImageList(boolean reload) {
-        if (reload)
+        if (reload || this.imageList == null)
             this.createImageList();
         return this.imageList;
-    }
-
-    public File getConfigFile() {
-        return this.config;
     }
     
     public void createThumbnailFolder() {
@@ -306,66 +198,17 @@ public final class GalleryNode extends TreeItem {
             thumbnailFolder.mkdir();
         }
     }
-
-    private void readConfigFile() {
-
-        String rawJSON = null;
-
-        Logger.getLogger("logfile").log(Level.SEVERE, "Starting to read");
-        
-        try {
-            rawJSON = new String(Files.readAllBytes(this.config.toPath()));
-        } catch (Exception  e) {
-            Logger.getLogger("logfile").log(Level.SEVERE, "Error reading File {0}", e.getMessage());
-            e.printStackTrace();
-        }
-
-        JSONObject rootObject = new JSONObject(rawJSON);
-
-        this.setName(rootObject.getString(GALLERY_JSON_CONF_NAME));
-        if (this.type == NodeType.GALLERY) {
-            try {
-                this.lastChanged = new Date(rootObject.getLong(GALLERY_JSON_CONF_LASTCHANGED));
-            } catch (JSONException e) {
-                this.lastChanged = new Date(0);
-                this.saveConfigFile();
-            }
-        }
+    
+    public List<GalleryNode> getLocationInTree() {
+        List<GalleryNode> path = new LinkedList<>();
+        this.getLocationInTree(path);
+        return path;
     }
     
-    public void saveConfigFile() {
-        JSONObject configObject = new JSONObject();
-        configObject.put(GALLERY_JSON_CONF_NAME, this.name);
-        
-        // TODO is this the best way to assign the node type?
-        if (this.type == null) {
-            if (this.config.getName().equals(GalleryManager.GALLERY_CONFIG_FILE_NAME))
-                this.type = NodeType.GALLERY;
-            else
-                this.type = NodeType.COLLECTION;
-        }
-        
-        if (this.type == NodeType.GALLERY) {
-            configObject.put(GALLERY_JSON_CONF_LASTCHANGED, 
-                    this.lastChanged == null ? 0 : this.lastChanged.getTime());
-        }
-        
-        try (FileWriter configFile = new FileWriter(this.config)) {
-            configFile.write(configObject.toString());
-        } catch (IOException ex) {
-            Logger.getLogger("logfile").log(Level.SEVERE, ex.getMessage());
-        }
+    private void getLocationInTree(List<GalleryNode> path) {
+        if (this.getParent() != null && !((GalleryNode)this.getParent()).isTrunk())
+            ((GalleryNode)this.getParent()).getLocationInTree(path);
+        path.add(this);
     }
-    
-    public JSONObject toCache() {
-        JSONObject object = new JSONObject();
-        
-        for (Object s : this.getChildren().toArray()) {
-            if (s instanceof GalleryNode) {
-                GalleryNode g = (GalleryNode)s;
-                object.put(g.getFolderName(), g.toCache());
-            }
-        }
-        return object;
-    }
+
 }

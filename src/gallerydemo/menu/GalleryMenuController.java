@@ -6,13 +6,11 @@ package gallerydemo.menu;
 
 import gallery.GalleryNode;
 import gallery.load.AddImageService;
-import gallery.load.CopyGalleryService;
+import gallery.load.DuplicateGalleryService;
 import gallerycompare.GalleryCompareView;
 import gallerydemo.GalleryDemoViewController;
 import java.io.File;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -55,10 +53,10 @@ public final class GalleryMenuController extends AbstractMenu {
         this.syncGalleryButton.setOnAction((ActionEvent event) -> {
             GalleryNode g = controller.getActiveGallery();
 
-            if (g.getOriginNode() != null) {
-                Parent root1 = new GalleryCompareView(g, g.getOriginNode());
+            if (g.getSettings().compareNode != null) {
+                Parent root1 = new GalleryCompareView(g, g.getSettings().compareNode);
                 Stage stage = new Stage();
-                stage.setTitle(g.getName() + " synchronisieren");
+                stage.setTitle(g.getData().name + " synchronisieren");
                 stage.setScene(new Scene(root1));
                 stage.setMinWidth(750);
                 stage.setMinHeight(450);
@@ -67,45 +65,22 @@ public final class GalleryMenuController extends AbstractMenu {
                     controller.enableInput();
                     controller.reloadGalleryImages(g, true);
                     ((GalleryCompareView)root1).controller.updateTimestamps();
-                    controller.getActiveGallery().updateIcon();
                 });
-                controller.disableInput(g.getName() + " wird synchronisiert...");
+                controller.disableInput(g.getData().name + " wird synchronisiert...");
             }
         });
         
         this.exportGalleryButton.setOnAction((ActionEvent event)  -> {
-            GalleryNode g = this.controller.getActiveGallery();
-            
-            File origin = g.getLocation();
-            String absOriginPath = origin.getAbsolutePath().replace('\\', '/');
-            String absLocalPath = controller.settings.getLocalGalleryLocation().getAbsolutePath().replace('\\', '/');
-            String absRemotePath = controller.settings.getRemoteGalleryLocation().getAbsolutePath().replace('\\', '/');
-
-            Logger.getLogger("logfile").log(Level.INFO, "[export] ORIGIN {0}", absOriginPath);
-            Logger.getLogger("logfile").log(Level.INFO, "[export] LOCAL  {0}", absLocalPath);
-            Logger.getLogger("logfile").log(Level.INFO, "[export] REMOTE {0}", absRemotePath);
-            
-            final String relPath = absOriginPath.replaceFirst(absLocalPath + "/", "");
-
-            File target = new File(absRemotePath + "/" + relPath);
-            
-            Logger.getLogger("logfile").log(Level.INFO, "[export] REL    {0}", relPath);
-            Logger.getLogger("logfile").log(Level.INFO, "[export] {0}: {1} -> {2}", new Object[]{g.getFileName(), origin, target});
-            
-            CopyGalleryService task = new CopyGalleryService(this.controller, origin, target,
-                    "Exporting gallery '" + g + "'",
+            DuplicateGalleryService task = new DuplicateGalleryService(
+                    this.controller,
+                    this.controller.getActiveGallery(),
+                    this.controller.getRemoteManager().getTrunk(),
+                    "Galerie " + this.controller.getActiveGallery().getData().name + " wird auf den Server kopiert",
                     () -> {
-                        //g.setOrigin(target);
-                        //g.saveConfigFile();
-                        GalleryNode newNode = this.controller.getRemoteManager().addGallery(relPath, g.getName());
-                        newNode.setLastChanged(g.getLastChanged());
-                        g.setOriginNode(newNode);
                         this.actualizeButtons();
                     }
             );
             task.start();
-            
-            this.exportGalleryButton.setDisable(true);
         });
         
         this.addimgGalleryButton.setOnAction((ActionEvent event)  -> {
@@ -128,8 +103,7 @@ public final class GalleryMenuController extends AbstractMenu {
         if (this.controller.getActiveGallery() != null
                 && this.controller.getActiveGallery().isGallery()) {
             
-            if (this.controller.getActiveGallery().getOriginNode() != null
-                    && this.controller.getActiveGallery().isOriginConfirmed()) {
+            if (this.controller.getActiveGallery().getSettings().compareNode != null) {
                 this.syncGalleryButton.setVisible(true);
                 this.exportGalleryButton.setVisible(false);
             }

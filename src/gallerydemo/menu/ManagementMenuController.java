@@ -7,12 +7,12 @@ package gallerydemo.menu;
 
 import gallery.GalleryManager;
 import gallery.GalleryNode;
+import gallery.GalleryNodeData;
+import gallery.GalleryNodeSettings;
+import gallery.load.DeleteGalleryService;
 import gallerydemo.GalleryDemoViewController;
 import java.io.File;
-import java.io.IOException;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -20,7 +20,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
-import org.apache.commons.io.FileUtils;
 
 /**
  * FXML Controller class
@@ -62,7 +61,7 @@ public final class ManagementMenuController extends AbstractMenu {
                 return;
             }
 
-            TextInputDialog dialog = new TextInputDialog(g.getName());
+            TextInputDialog dialog = new TextInputDialog(g.getData().name);
             dialog.setTitle("Umbenennen");
             dialog.setHeaderText(g.isGallery() ? "Die ausgewählte Galerie umbenennen"
                     : "Den ausgewählten Ordner umbenennen");
@@ -70,8 +69,9 @@ public final class ManagementMenuController extends AbstractMenu {
 
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
-                g.setName(result.get());
-                g.saveConfigFile();
+                g.getData().name = result.get();
+                GalleryNodeData.saveGalleryNodeData(g.getConfigFile(), g.getData());
+                g.updateView();
             }
         });
 
@@ -86,21 +86,33 @@ public final class ManagementMenuController extends AbstractMenu {
             alert.setTitle("Löschen");
             alert.setHeaderText(g.isGallery() ? "Die ausgewählte Galerie löschen?"
                     : "Den ausgewählten Ordner löschen?");
-            alert.setContentText("Unwiederruflicher Vorgang!");
+
+            // Info depending on gallery Status
+            if (g.isGallery()) {
+                switch (g.getStatus()) {
+                    case LOCALNEWER:
+                        alert.setContentText("Äderungen, die nicht am Server gespeichert wurden gehen unwiederruflich verloren!");
+                        break;
+                    case OFFLINE:
+                        alert.setContentText("Sämtliche Inhalte gehen unwiederruflich verloren!");
+                        break;
+                    default:
+                        alert.setContentText("Die Galerie wird nur von diesem Computer entfernt. Inhalte am Server sind nicht betroffen.");
+                        break;
+                }
+            } else {
+                alert.setContentText("Der Ordner wird mitsamt seinem Inhalt gelöscht. Galerien, die nicht auf den Server kopiert wurden, gehen unwiederruflich verloren!");
+            }
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                GalleryNode parent = (GalleryNode)g.getParent();
-                Logger.getLogger("logfile").log(Level.INFO, "[delete] {0}", g.getLocation());
-                try {
-                    FileUtils.deleteDirectory(g.getLocation());
-                } catch (IOException ex) {
-                    Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
-                } finally {
-                    // Remove deleted gallery from tree view
-                    parent.getChildren().remove(g);
-                    this.controller.setActiveGallery(parent);
-                }
+                DeleteGalleryService task = new DeleteGalleryService(
+                        this.controller,
+                        g,
+                        (g.isGallery() ? "Galerie " : "Ordner ") + g.getData().name + " wird gelöscht",
+                        null
+                );
+                task.start();
             }
         });
     }
@@ -111,8 +123,7 @@ public final class ManagementMenuController extends AbstractMenu {
                 || this.controller.getActiveGallery().isTrunk()) {
             this.galleryPropertiesButton.setDisable(true);
             this.deleteGalleryButton.setDisable(true);
-        }
-        else {
+        } else {
             this.galleryPropertiesButton.setDisable(false);
             this.deleteGalleryButton.setDisable(false);
         }
@@ -120,17 +131,18 @@ public final class ManagementMenuController extends AbstractMenu {
 
     private void createGalleryOrFolder(boolean isGallery) {
         GalleryNode g = this.controller.getActiveGallery();
-        File base;
+        GalleryNode base;
+        // No gallery selected
         if (g == null) {
-            base = this.controller.settings.getLocalGalleryLocation();
+            base = this.controller.getLocalManager().getTrunk();
         }
         // Create outside gallery folder
         else if (g.isGallery()) {
-            base = g.getLocation().getParentFile();
+            base = (GalleryNode) g.getParent();
         }
         // Create insode collection folder
         else {
-            base = g.getLocation();
+            base = g;
         }
 
         TextInputDialog dialog = new TextInputDialog(
@@ -148,20 +160,43 @@ public final class ManagementMenuController extends AbstractMenu {
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
-            File newFolder = new File(base.getAbsolutePath() + "/" + result.get());
-            newFolder.mkdir();
-            System.out.println("mkdir " + newFolder.getPath());
-            if (isGallery) {
-                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.GALLERY_CONFIG_FILE_NAME), false, true, result.get(), false);
-                newGallery.galleryChanged();
-                //newGallery.saveConfigFile();
-            } else {
-                GalleryNode newGallery = new GalleryNode(new File(newFolder.getAbsolutePath() + "/" + GalleryManager.COLLECTION_CONFIG_FILE_NAME), false, true, result.get(), false);
-                newGallery.saveConfigFile();
+            // Check if gallery already exists (check names only)
+            for (Object o : base.getChildren().toArray()) {
+                if (((GalleryNode)o).getData().name.equals(result.get())) {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Galerie konnte nicht erstellt werden");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Der angegebene Name existiert bereits in diesem Ordner!");
+                    alert.showAndWait();
+                    this.controller.enableInput();
+                    return;
+                }
             }
-            this.controller.refreshTreeItems();
-            if (g != null)
-                g.setExpanded(true);
+            // If file name exists, create new file name
+            File newFolder;
+            int i = 0;
+            do {
+                newFolder = new File(base.getLocation().getPath() + "/" + result.get() + 
+                        (i > 0 ? ("-" + i) : ""));
+                i++;
+            } while(newFolder.exists());
+            
+            newFolder.mkdir();
+            GalleryNode newGallery = new GalleryNode(
+                    new File(newFolder.getAbsolutePath() + "/" + (isGallery
+                            ? GalleryManager.GALLERY_CONFIG_FILE_NAME
+                            : GalleryManager.COLLECTION_CONFIG_FILE_NAME)
+                    ),
+                    GalleryNodeData.createCalleryNodeData(result.get()),
+                    new GalleryNodeSettings(isGallery
+                            ? GalleryNodeSettings.GalleryType.GALLERY
+                            : GalleryNodeSettings.GalleryType.COLLECTION
+                    )
+            );
+            base.getChildren().add(newGallery);
+            base.sortChildren();
+            //this.controller.refreshTreeItems();
+            base.setExpanded(true);
         }
 
         this.controller.enableInput();

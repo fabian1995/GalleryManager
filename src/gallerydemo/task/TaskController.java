@@ -47,7 +47,7 @@ public class TaskController extends BorderPane {
     
     public final void setProgress(int progress, int max) {
         this.progressBar.setProgress((double)progress/max);
-        if (max >= 0)
+        if (max > 0 && progress >= 0)
             this.progressText.setText(progress + "/" + max);
         else
             this.progressText.setText("");

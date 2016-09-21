@@ -27,7 +27,7 @@ public class AddImageService extends Service {
         this.controller = controller;
         this.gallery = gallery;
         this.fileList = fileList;
-        this.task = this.controller.registerNewTask("Copying images to '" + gallery.getName() + "'", 1);
+        this.task = this.controller.registerNewTask("Copying images to '" + gallery.getData().name + "'", 1);
     }
     
     @Override

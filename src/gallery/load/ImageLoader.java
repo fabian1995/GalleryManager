@@ -39,7 +39,7 @@ public class ImageLoader extends Task {
 
     @Override
     protected Object call() throws Exception {
-        
+
         gallery.createThumbnailFolder();
         List<GalleryImage> images = gallery.getImageList(this.reload);
         

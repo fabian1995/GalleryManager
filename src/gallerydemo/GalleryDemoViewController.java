@@ -25,7 +25,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -148,11 +147,11 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
             this.galleryMenuController.actualizeButtons();
 
             // Search server galleries
-            SearchGalleryService task = new SearchGalleryService(this, this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk(), true, () -> {
+            SearchGalleryService task = new SearchGalleryService(this, this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk(), () -> {
                 this.searching = false;
+                this.galleryManager.setCompareTrunk(this.remoteManager.getTrunk());
                 this.fileMenuController.actualizeButtons();
                 this.galleryMenuController.actualizeButtons();
-                this.galleryManager.findUnconfirmedGalleries(this.locationTreeView, this.messageList);
             });
             
             task.start();
@@ -182,30 +181,31 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         this.refreshGalleryInfo();
     }
     
+    public GalleryNode getActiveGallery() {
+        return this.activeGallery;
+    }
+    
     public void refreshGalleryInfo() {
         if (this.activeGallery.isGallery()) {
-            if (this.activeGallery.getLastChanged().getTime() > 0) {
+            if (this.activeGallery.getData().lastChanged.getTime() > 0) {
                 SimpleDateFormat df = new SimpleDateFormat("dd. MM. yyyy, HH:mm");
-                this.infoLastChanged.setText(df.format(this.activeGallery.getLastChanged()));
+                this.infoLastChanged.setText(df.format(this.activeGallery.getData().lastChanged));
             }
             else
                 this.infoLastChanged.setText("Unbekannt");
             
-            this.infoStatusText.setText("Aktuell");
+            switch(this.activeGallery.getStatus()) {
+                case OFFLINE: this.infoStatusText.setText("Nur am Computer"); break;
+                case UPTODATE: this.infoStatusText.setText("Gesichert, aktuell"); break;
+                case LOCALNEWER: this.infoStatusText.setText("Nicht gesicherte Änderungen"); break;
+                case SERVERNEWER: this.infoStatusText.setText("Server aktueller"); break;
+            }
         }
         else {
             this.infoLastChanged.setText("");
             this.infoStatusText.setText("");
         }
     }
-    
-    public GalleryNode getActiveGallery() {
-        return this.activeGallery;
-    }
-    
-    /*public GalleryNode getRoot() {
-        return (GalleryNode)locationTreeView.getRoot();
-    }*/
     
     public GalleryManager getLocalManager() {
         return this.galleryManager;
@@ -258,11 +258,6 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
     
     public void enableInput() {
         this.fadeOutPane.setVisible(false);
-    }
-
-    public void refreshTreeItems() {
-        this.galleryManager.search();
-        locationTreeView.setRoot(this.galleryManager.getTrunk());
     }
     
     public void reloadGalleryImages(GalleryNode galleryNode, boolean reload) {

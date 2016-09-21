@@ -28,7 +28,7 @@ public class ImageLoaderService extends Service {
         this.controller = controller;
         this.imagePane = imagePane;
         this.gallery = gallery;
-        this.task = this.controller.registerNewTask("Loading Thumbnails for '" + gallery.getName() + "'", 1);
+        this.task = this.controller.registerNewTask("Loading Thumbnails for '" + gallery.getData().name + "'", 1);
         this.reload = reload;
     }
     

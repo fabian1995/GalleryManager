@@ -41,7 +41,8 @@ public class CopyGalleryTask extends Task {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.matches(GalleryManager.IMAGE_FILE_REGEX)
-                        || name.matches(GalleryManager.VIDEO_FILE_REGEX));
+                        || name.matches(GalleryManager.VIDEO_FILE_REGEX)
+                        || name.matches(GalleryManager.GALLERY_CONFIG_FILE_NAME));
             }
         });
 
