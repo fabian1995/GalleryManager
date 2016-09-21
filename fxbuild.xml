@@ -5,7 +5,6 @@
 	<property environment="env"/>
 	<property name="build.src.dir" value="src"/>
 	<property name="build.classes.dir" value="classes"/>
-	<property name="build.dist.dir" value="fxdist"/>
 	<property name="build.lib.dir" value="lib" />
  
 	<target name="check-java"> 
@@ -19,7 +18,7 @@
 			uri="javafx:com.sun.javafx.tools.ant"
 			classpath="${env.JAVA_HOME}/lib/ant-javafx.jar"/>
  
-		<fx:jar destfile="${build.dist.dir}/GalleryManager.jar">
+		<fx:jar destfile="GalleryManager.jar">
 			<fx:application name="Gallery Manager"
 				mainClass="gallerydemo.GalleryDemoApplication"/>
 			<fileset dir="${build.classes.dir}" casesensitive="no">
@@ -30,8 +29,8 @@
 			</fileset>
 			<manifest>
 				<attribute name="Implementation-Vendor" value="Fabian Hummer"/>
-				<attribute name="Implementation-Version" value="Alpha 1.1"/>
-				<attribute name="Implementation-Build-No" value="003"/>
+				<attribute name="Implementation-Version" value="Alpha 1.5.0"/>
+				<attribute name="Implementation-Build-No" value="020"/>
 				<attribute name="Implementation-Use-Version-No" value="Yes"/>
 			</manifest>
 		</fx:jar>
@@ -39,11 +38,8 @@
  
 	<target name="clean">
 		<mkdir dir="${build.classes.dir}"/>
-		<mkdir dir="${build.dist.dir}"/>
-
 		<delete>
 			<fileset dir="${build.classes.dir}" includes="**/*"/>
-			<fileset dir="${build.dist.dir}" includes="**/*"/>
 		</delete>
 	</target>
  
