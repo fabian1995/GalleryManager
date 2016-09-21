@@ -32,7 +32,6 @@ public class GalleryNodeData {
     }
     
     public static GalleryNodeData createTrunkNodeData() {
-        // TODO what to do with lastChanged?
         return new GalleryNodeData("Bilder auf diesem Computer", new Date(0));
     }
     
@@ -40,7 +39,6 @@ public class GalleryNodeData {
         return new GalleryNodeData(name, new Date());
     }
     
-    // TODO don't save trunk
     public static GalleryNodeData readGalleryNodeData(File config) {
         String rawJSON = null;
         
