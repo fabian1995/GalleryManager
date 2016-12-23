@@ -14,14 +14,15 @@
     </stylesheets>
     
     <top>
-        <Text fx:id="title" styleClass="title" />
+        <VBox>
+            <Label fx:id="title" styleClass="title" />
+            <Label fx:id="desc" styleClass="desc" />
+        </VBox>
     </top>
     <left>
-        <Text fx:id="desc" styleClass="desc" />
-    </left>
-    <center>
         <Button fx:id="button" text="Show" />
-    </center>
+    </left>
+    <center></center>
     <right>
         <Button fx:id="close" text="X" />
     </right>

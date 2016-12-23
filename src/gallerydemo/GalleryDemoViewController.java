@@ -15,6 +15,7 @@ import gallerydemo.fullView.FullSizeViewController;
 import gallerydemo.menu.FileMenuController;
 import gallerydemo.menu.ManagementMenuController;
 import gallerydemo.menu.GalleryMenuController;
+import gallerydemo.message.CallbackMessageController;
 import gallerydemo.settings.GallerySettings;
 import gallerydemo.task.TaskController;
 import java.net.URL;
@@ -138,26 +139,50 @@ public class GalleryDemoViewController implements Initializable, ServiceControll
         
         this.setViewState(ViewState.BROWSE);
         
+        this.remoteManager = null;
+        
         if (this.settings.getRemoteGalleryLocation() != null
                 && this.settings.getRemoteGalleryLocation().exists()) {
-            this.remoteManager = null;
-            
-            // Disable "Export gallery" buttons
-            this.searching = true;
-            this.galleryMenuController.actualizeButtons();
-
-            // Search server galleries
-            SearchGalleryService task = new SearchGalleryService(this, this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk(), () -> {
-                this.searching = false;
-                this.galleryManager.setCompareTrunk(this.remoteManager.getTrunk());
-                this.fileMenuController.actualizeButtons();
-                this.galleryMenuController.actualizeButtons();
-            });
-            
-            task.start();
+            this.startSearch(null);
         } else {
-            this.remoteManager = null;
+            
+            CallbackMessageController msgControl = new CallbackMessageController(
+                            this.messageList,
+                            "Nicht verbunden",
+                            "Verbindung zum Server konnte nicht hergestellt werden",
+                            "Aktualisieren",
+                            false, null
+                    );
+            
+            // Add messagt that the remote location could not be found
+            this.messageList.getChildren().add(msgControl);
+            
+            msgControl.setCallback(() -> {
+                if (settings.getRemoteGalleryLocation() != null
+                    && settings.getRemoteGalleryLocation().exists()) {
+                    msgControl.setButtonDisable(true);
+                    startSearch(msgControl);
+                }
+            });
         }
+    }
+    
+    public void startSearch(final CallbackMessageController initiator) {
+        // Disable "Export gallery" buttons
+        this.searching = true;
+        this.galleryMenuController.actualizeButtons();
+
+        // Search server galleries
+        SearchGalleryService task = new SearchGalleryService(this, this.settings.getRemoteGalleryLocation(), this.galleryManager.getTrunk(), () -> {
+            this.searching = false;
+            this.galleryManager.setCompareTrunk(this.remoteManager.getTrunk());
+            this.fileMenuController.actualizeButtons();
+            this.galleryMenuController.actualizeButtons();
+            if (initiator != null)
+                messageList.getChildren().remove(initiator);
+        });
+            
+        task.start();
     }
     
     public boolean isSearching() {

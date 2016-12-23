@@ -15,8 +15,6 @@ public class GalleryManager {
     public static final String IMAGE_FILE_REGEX = "^[^\\.][\\w\\s\\.#\\-]+\\.(jpg|JPG|png|PNG|jpeg|JPEG|bmp|BMP)$";
     public static final String VIDEO_FILE_REGEX = "^[^\\.][\\w\\s\\.#\\-]+\\.(mov|MOV|mp4|MP4|avi|AVI)$";
 
-    private static final String JSON_CONF_CACHE = "cache";
-
     private GalleryNode trunk = null;
     private GalleryNode compareTrunk;
 

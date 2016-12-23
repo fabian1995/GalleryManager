@@ -9,31 +9,32 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.paint.Paint;
 
 /**
  * FXML Controller class
  *
  * @author fabian
  */
-public class MessageController extends BorderPane {
+public class TreeMessageController extends BorderPane {
     
     private final VBox container;
     private final TreeView tree;
     private final GalleryNode target;
     
-    @FXML private Text title;
+    @FXML private Label title;
     
-    @FXML private Text desc;
+    @FXML private Label desc;
     
     @FXML private Button button;
     
     @FXML private Button close;
 
-    public MessageController(VBox container, String title, String desc, TreeView tree, GalleryNode target) {
+    public TreeMessageController(VBox container, String title, String desc, TreeView tree, GalleryNode target) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Message.fxml"));
         fxmlLoader.setRoot((BorderPane) this);
         fxmlLoader.setController((BorderPane) this);
@@ -49,11 +50,18 @@ public class MessageController extends BorderPane {
         this.target = target;
         
         this.title.setText(title);
-        this.desc.setText(desc);
+        this.title.setWrapText(true);
+        this.title.setTextFill(Paint.valueOf("#8a8a8a"));
         
-        this.button.setOnAction((ActionEvent) -> {
-            tree.getSelectionModel().select(this.target);
-        });
+        this.desc.setText(desc);
+        this.desc.setWrapText(true);
+        this.desc.setTextFill(Paint.valueOf("#729FCF"));
+        
+        if (this.tree != null && this.target != null) {
+            this.button.setOnAction((ActionEvent) -> {
+                tree.getSelectionModel().select(this.target);
+            });
+        }
         
         this.close.setOnAction((ActionEvent) -> {
             this.container.getChildren().remove(this);

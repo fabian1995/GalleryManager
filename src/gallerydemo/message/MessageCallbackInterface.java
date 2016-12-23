@@ -2,12 +2,12 @@
  * asdf
  * Each line should be prefixed with  * 
  */
-package gallery.load;
+package gallerydemo.message;
 
 /**
  *
  * @author fabian
  */
-public interface ServiceCallbackInterface {
+public interface MessageCallbackInterface {
     public void run();
 }
