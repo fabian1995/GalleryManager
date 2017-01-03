@@ -44,8 +44,8 @@ public class AddImageTask extends Task {
         });
         
         for (int i = 0; i < this.fileList.size(); i++) {
-            if (this.fileList.get(i).getName().matches(GalleryManager.IMAGE_FILE_REGEX)
-                    || this.fileList.get(i).getName().matches(GalleryManager.VIDEO_FILE_REGEX)) {
+            if (GalleryManager.IMAGE_FILE_PATTERN.matcher(this.fileList.get(i).getName()).matches()
+                    || GalleryManager.VIDEO_FILE_PATTERN.matcher(this.fileList.get(i).getName()).matches()) {
                 try {
                     File destinationFile = new File(this.controller.getActiveGallery().getLocation() + "/" + this.fileList.get(i).getName());
                     Files.copy(this.fileList.get(i).toPath(), destinationFile.toPath(), COPY_ATTRIBUTES);
@@ -54,6 +54,8 @@ public class AddImageTask extends Task {
                     Logger.getLogger("logfile").log(Level.SEVERE, null, ex);
                 }
             }
+            else
+                System.out.println("File " + this.fileList.get(i).getName() + "did not match!");
             final int progress = i;
             Platform.runLater(() -> {
                 if (!isCancelled()) {

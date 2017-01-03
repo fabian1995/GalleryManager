@@ -28,7 +28,7 @@ public class GalleryImage implements Comparable{
     public GalleryImage(File file) throws IOException {
         this.file = file;
         
-        if (this.file.getName().matches(GalleryManager.IMAGE_FILE_REGEX))
+        if (GalleryManager.IMAGE_FILE_PATTERN.matcher(this.file.getName()).matches())
             this.type = GalleryImageType.IMAGE;
         else
             this.type = GalleryImageType.VIDEO;

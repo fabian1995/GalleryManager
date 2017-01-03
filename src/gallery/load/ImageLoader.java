@@ -70,7 +70,7 @@ public class ImageLoader extends Task {
 
     public Image loadOrCreateThumbnail(File imagePath) {
         
-        if (!imagePath.getName().matches(GalleryManager.IMAGE_FILE_REGEX)) {
+        if (!GalleryManager.IMAGE_FILE_PATTERN.matcher(imagePath.getName()).matches()) {
             ImageIcon icon = (ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(imagePath);
             BufferedImage bufferedImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
                 BufferedImage.TYPE_INT_ARGB);

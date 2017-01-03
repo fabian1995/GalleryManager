@@ -151,8 +151,8 @@ public final class GalleryNode extends TreeItem {
     @Deprecated
     public File[] listImages() {
         return this.getLocation().listFiles((File dir, String fileName) -> {
-            return (fileName.matches(GalleryManager.IMAGE_FILE_REGEX)
-                    || fileName.matches(GalleryManager.VIDEO_FILE_REGEX));
+            return (GalleryManager.IMAGE_FILE_PATTERN.matcher(fileName).matches()
+                    || GalleryManager.VIDEO_FILE_PATTERN.matcher(fileName).matches());
         });
     }
     
@@ -163,8 +163,8 @@ public final class GalleryNode extends TreeItem {
         this.imageList.clear();
         
         File[] fileList = this.getLocation().listFiles((File dir, String fileName) -> {
-            return (fileName.matches(GalleryManager.IMAGE_FILE_REGEX)
-                    || fileName.matches(GalleryManager.VIDEO_FILE_REGEX));
+            return (GalleryManager.IMAGE_FILE_PATTERN.matcher(fileName).matches()
+                    || GalleryManager.VIDEO_FILE_PATTERN.matcher(fileName).matches());
         });
         
         if (fileList != null) {

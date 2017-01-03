@@ -3,6 +3,7 @@ package gallery;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class GalleryManager {
 
@@ -12,8 +13,10 @@ public class GalleryManager {
     public static final String GALLERY_CONFIG_FILE_NAME = ".gallery.json";
     public static final String COLLECTION_CONFIG_FILE_NAME = ".collection.json";
     public static final String THUMBNAIL_FOLDER = ".thumbnails";
-    public static final String IMAGE_FILE_REGEX = "^[^\\.][\\w\\s\\.#\\-]+\\.(jpg|JPG|png|PNG|jpeg|JPEG|bmp|BMP)$";
-    public static final String VIDEO_FILE_REGEX = "^[^\\.][\\w\\s\\.#\\-]+\\.(mov|MOV|mp4|MP4|avi|AVI)$";
+    private static final String IMAGE_FILE_REGEX = "^[^\\.].*?\\.(jpg|JPG|png|PNG|jpeg|JPEG|bmp|BMP)$";
+    private static final String VIDEO_FILE_REGEX = "^[^\\.].*?\\.(mov|MOV|mp4|MP4|avi|AVI)$";
+    public static final Pattern IMAGE_FILE_PATTERN = Pattern.compile(IMAGE_FILE_REGEX, Pattern.DOTALL);
+    public static final Pattern VIDEO_FILE_PATTERN = Pattern.compile(VIDEO_FILE_REGEX, Pattern.DOTALL);
 
     private GalleryNode trunk = null;
     private GalleryNode compareTrunk;

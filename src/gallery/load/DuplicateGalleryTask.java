@@ -102,8 +102,8 @@ public class DuplicateGalleryTask extends Task {
         final File[] fileList = from.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return (name.matches(GalleryManager.IMAGE_FILE_REGEX)
-                        || name.matches(GalleryManager.VIDEO_FILE_REGEX)
+                return (GalleryManager.IMAGE_FILE_PATTERN.matcher(name).matches()
+                        || GalleryManager.VIDEO_FILE_PATTERN.matcher(name).matches()
                         || name.matches(GalleryManager.GALLERY_CONFIG_FILE_NAME)
                         || name.matches(GalleryManager.COLLECTION_CONFIG_FILE_NAME));
             }
